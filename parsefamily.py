@@ -16,10 +16,39 @@ args = vars(ap.parse_args())
 # and use Tesseract to localize each area of text in the input image
 image = cv2.imread(args["image"])
 rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-results = pytesseract.image_to_data(rgb, output_type=Output.DICT)
+results = pytesseract.image_to_data(rgb, output_type=Output.DICT, lang='fin')
 
+# 1. blokki
+# ylin,vasemmaisin
+# alapuoliskon ylin, oikeapuoliskon vasemmaisin
+# sama nimi/alku/peräkkäinen aakkosissa
+# tekstin korkeus
+# tasaus muihin todennäköisiin
+# ei usein käytetty termi / kylännimi
 
 # loop over each of the individual text localizations
+
+def ero(nimi, vnimi):
+    return abs(ord(nimi[0])-ord(vnimi[0]))*255 + abs(ord(nimi[1])-ord(vnimi[1]))
+
+nimet=[]
+
+assert(ero("Jari", "Ilona") == 255+11)
+assert(ero("Saari", "Salonen") == 0)
+
+def etaisyydet(nimet):
+    pal=[]
+    for nimi in nimet:        
+        erot=0        
+        for vnimi in nimet:
+            erot+=ero(nimi, vnimi)
+        pal.append(erot)
+    return pal
+
+# Poistaa nimet jotka ovat muita kauempana aakkosjärjestyksessä
+def poistaErilaiset(nimet):    
+    return [x for _, x in sorted(zip(etaisyydet(nimet), nimet))][:4]
+
 for i in range(0, len(results["text"])):
 	# extract the bounding box coordinates of the text region from
 	# the current result
@@ -27,6 +56,12 @@ for i in range(0, len(results["text"])):
 	y = results["top"][i]
 	w = results["width"][i]
 	h = results["height"][i]
+
+	b = results["block_num"][i]
+	p = results["par_num"][i]
+	l = results["line_num"][i]
+	w = results["word_num"][i]
+
 	# extract the OCR text itself along with the confidence of the
 	# text localization
 	text = results["text"][i]
@@ -35,19 +70,22 @@ for i in range(0, len(results["text"])):
 
 
 # filter out weak confidence text localizations
-	if conf > args["min_conf"]:
+	if conf > args["min_conf"] and h > 37 and h < 41 and w == 1:
 		# display the confidence and text to our terminal
 		print("Confidence: {}".format(conf))
+		print("x: {}".format(x))
+		print("y: {}".format(y))
+		print("h: {}".format(h))
+
+		print("b: {}".format(b))
+		print("p: {}".format(p))
+		print("l: {}".format(l))
+		print("w: {}".format(w))
+
 		print("Text: {}".format(text))
 		print("")
-		# strip out non-ASCII text so we can draw the text on the image
-		# using OpenCV, then draw a bounding box around the text along
-		# with the text itself
-		#text = "".join([c if ord(c) < 128 else "" for c in text]).strip()
-		#cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-		#cv2.putText(image, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX,
-		#	1.2, (0, 0, 255), 3)
+        
+		nimet.append(text)
 
-# show the output image
-#cv2.imshow("Image", image)
-#cv2.waitKey(0)
+print(poistaErilaiset(nimet))
+
