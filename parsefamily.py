@@ -1,3 +1,4 @@
+import math  
 # import the necessary packages
 from pytesseract import Output
 import pytesseract
@@ -23,7 +24,7 @@ results = pytesseract.image_to_data(rgb, output_type=Output.DICT, lang='fin')
 # alapuoliskon ylin, oikeapuoliskon vasemmaisin
 # sama nimi/alku/peräkkäinen aakkosissa
 # tekstin korkeus
-# tasaus muihin todennäköisiin
+# tasaus muihin todennäköisiin (x: 1133-1135, y: 1619-1622)
 # ei usein käytetty termi / kylännimi
 
 # loop over each of the individual text localizations
@@ -31,7 +32,7 @@ results = pytesseract.image_to_data(rgb, output_type=Output.DICT, lang='fin')
 def ero(nimi, vnimi):
     return abs(ord(nimi[0])-ord(vnimi[0]))*255 + abs(ord(nimi[1])-ord(vnimi[1]))
 
-nimet=[]
+sukunimet=[]
 
 assert(ero("Jari", "Ilona") == 255+11)
 assert(ero("Saari", "Salonen") == 0)
@@ -85,7 +86,50 @@ for i in range(0, len(results["text"])):
 		print("Text: {}".format(text))
 		print("")
         
-		nimet.append(text)
+		sukunimet.append(text)
+		if(b==1):
+		    topleft=i
 
-print(poistaErilaiset(nimet))
+sukunimet=poistaErilaiset(sukunimet)
+#print(poistaErilaiset(nimet))
 
+topleftx = results["left"][topleft]
+toplefty = results["top"][topleft]
+kallistus=-1
+
+PALSTAX=1134
+PALSTAY=1620
+TOLE=3
+
+print("-------------------")
+
+# Sukunimet koordinaatin mukaan
+
+for i in range(0, len(results["text"])):
+	# extract the bounding box coordinates of the text region from
+	# the current result
+	x = results["left"][i]
+	y = results["top"][i]
+	conf = int(results["conf"][i])
+	
+	if conf > args["min_conf"]:
+	    if(abs(abs(toplefty-y)-PALSTAY) < TOLE):
+	        bottomleft=i
+	        kallistus=(x-topleftx)/PALSTAY
+	        print("Kallistus: {}".format(kallistus))
+	    if kallistus != -1:
+	        if abs(abs(topleftx-x)-PALSTAX)<TOLE \
+                and abs(toplefty-(y+PALSTAX*kallistus))<TOLE:
+	            topright=i
+	        #if(abs(math.sqrt((topleftx-x)*(topleftx-x)+(toplefty-y)*(toplefty-y)) - 1976) < TOLE):
+	        #    bottomright=i
+	        if abs(abs(topleftx-(x-PALSTAY*kallistus))-PALSTAX) < TOLE \
+                and abs(toplefty+PALSTAY-(y+PALSTAX*kallistus)) < TOLE:
+	            bottomright=i
+
+for i in [topleft, bottomleft, topright, bottomright]:
+    text = results["text"][i]
+    print("Text: {}".format(text))
+
+    # filter out weak confidence text localizations
+	#if conf > args["min_conf"] and h > 37 and h < 41 and w == 1:
