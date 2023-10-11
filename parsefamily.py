@@ -33,6 +33,8 @@ def ero(nimi, vnimi):
     return abs(ord(nimi[0])-ord(vnimi[0]))*255 + abs(ord(nimi[1])-ord(vnimi[1]))
 
 sukunimet=[]
+kylat=[]
+topleft=-1
 
 assert(ero("Jari", "Ilona") == 255+11)
 assert(ero("Saari", "Salonen") == 0)
@@ -70,8 +72,8 @@ for i in range(0, len(results["text"])):
 
 
 
-# filter out weak confidence text localizations
-	if conf > args["min_conf"] and h > 37 and h < 41 and w == 1:
+    # filter out weak confidence text localizations
+	if conf > args["min_conf"] and (h > 37 and h < 41) and w == 1:
 		# display the confidence and text to our terminal
 		print("Confidence: {}".format(conf))
 		print("x: {}".format(x))
@@ -90,46 +92,72 @@ for i in range(0, len(results["text"])):
 		if(b==1):
 		    topleft=i
 
-sukunimet=poistaErilaiset(sukunimet)
-#print(poistaErilaiset(nimet))
+	if conf > args["min_conf"] and text in ["Kirkonkylä", "Kuivalahti", "Verkkokari", "Irjanne", "Lapijoki", "Kainu", "Uusi","Riiko","Linnamaa"]:
+		print("Confidence: {}".format(conf))
+		print("x: {}".format(x))
+		print("y: {}".format(y))
+		print("h: {}".format(h))
 
-topleftx = results["left"][topleft]
-toplefty = results["top"][topleft]
-kallistus=-1
+		print("b: {}".format(b))
+		print("p: {}".format(p))
+		print("l: {}".format(l))
+		print("w: {}".format(w))
+
+		print("Text: {}".format(text))
+		print("")
+		kylat.append(i)
 
 PALSTAX=1134
 PALSTAY=1620
-TOLE=3
 
-print("-------------------")
+if len(kylat)==4:
+    x1=results["left"][kylat[0]]
+    x2=results["left"][kylat[1]]
+    kallistus=(x2-x1)/PALSTAY
+    print("Kallistus: {}".format(kallistus))
 
-# Sukunimet koordinaatin mukaan
 
-for i in range(0, len(results["text"])):
-	# extract the bounding box coordinates of the text region from
-	# the current result
-	x = results["left"][i]
-	y = results["top"][i]
-	conf = int(results["conf"][i])
-	
-	if conf > args["min_conf"]:
-	    if(abs(abs(toplefty-y)-PALSTAY) < TOLE):
-	        bottomleft=i
-	        kallistus=(x-topleftx)/PALSTAY
-	        print("Kallistus: {}".format(kallistus))
-	    if kallistus != -1:
-	        if abs(abs(topleftx-x)-PALSTAX)<TOLE \
-                and abs(toplefty-(y+PALSTAX*kallistus))<TOLE:
-	            topright=i
-	        #if(abs(math.sqrt((topleftx-x)*(topleftx-x)+(toplefty-y)*(toplefty-y)) - 1976) < TOLE):
-	        #    bottomright=i
-	        if abs(abs(topleftx-(x-PALSTAY*kallistus))-PALSTAX) < TOLE \
-                and abs(toplefty+PALSTAY-(y+PALSTAX*kallistus)) < TOLE:
-	            bottomright=i
 
-for i in [topleft, bottomleft, topright, bottomright]:
-    text = results["text"][i]
-    print("Text: {}".format(text))
+if topleft>0:
+    topleftx = results["left"][topleft]
+    toplefty = results["top"][topleft]
+    kallistus=-1
 
-    # filter out weak confidence text localizations
-	#if conf > args["min_conf"] and h > 37 and h < 41 and w == 1:
+
+    TOLE=3
+
+    print("-------------------")
+
+    # Sukunimet koordinaatin mukaan
+
+    for i in range(0, len(results["text"])):
+	    # extract the bounding box coordinates of the text region from
+	    # the current result
+	    x = results["left"][i]
+	    y = results["top"][i]
+	    conf = int(results["conf"][i])
+	    
+	    if conf > args["min_conf"]:
+	        if(abs(abs(toplefty-y)-PALSTAY) < TOLE):
+	            bottomleft=i
+	            kallistus=(x-topleftx)/PALSTAY
+	            print("Kallistus: {}".format(kallistus))
+	        if kallistus != -1:
+	            if abs(abs(topleftx-x)-PALSTAX)<TOLE \
+                    and abs(toplefty-(y+PALSTAX*kallistus))<TOLE:
+	                topright=i
+	            #if(abs(math.sqrt((topleftx-x)*(topleftx-x)+(toplefty-y)*(toplefty-y)) - 1976) < TOLE):
+	            #    bottomright=i
+	            if abs(abs(topleftx-(x-PALSTAY*kallistus))-PALSTAX) < TOLE \
+                    and abs(toplefty+PALSTAY-(y+PALSTAX*kallistus)) < TOLE:
+	                bottomright=i
+
+    for i in [topleft, bottomleft, topright, bottomright]:
+        text = results["text"][i]
+        print("Text: {}".format(text))
+
+        # filter out weak confidence text localizations
+	    #if conf > args["min_conf"] and h > 37 and h < 41 and w == 1:
+else:
+    sukunimet=poistaErilaiset(sukunimet)
+    print(poistaErilaiset(sukunimet))
