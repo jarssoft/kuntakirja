@@ -97,7 +97,7 @@ for i in range(0, len(results["text"])):
 	korkeusy = results["top"][kylat[0]]-y
 
     # filter out weak confidence text localizations
-	if conf > args["min_conf"] and ((h > 36 and h < 47) or abs(korkeusy-82)<5) and w == 1:
+	if conf > args["min_conf"] and ((h > 36 and h < 50) or abs(korkeusy-82)<5) and w == 1 and len(text)>1:
 		# display the confidence and text to our terminal
 		print("Confidence: {}".format(conf))
 		print("x: {}".format(x))
