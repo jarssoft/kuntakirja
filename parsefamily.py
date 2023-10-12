@@ -35,6 +35,7 @@ def ero(nimi, vnimi):
 sukunimet=[]
 kylat=[]
 topleft=-1
+kylanimet=["Kirkonkylä", "Kuivalahti", "Verkkokari", "Irjanne", "Lapijoki", "Kainu", "Uusi", "Riiko", "Linnamaa"]
 
 assert(ero("Jari", "Ilona") == 255+11)
 assert(ero("Saari", "Salonen") == 0)
@@ -51,6 +52,29 @@ def etaisyydet(nimet):
 # Poistaa nimet jotka ovat muita kauempana aakkosjärjestyksessä
 def poistaErilaiset(nimet):    
     return [x for _, x in sorted(zip(etaisyydet(nimet), nimet))][:4]
+
+for i in range(0, len(results["text"])):
+	conf = int(results["conf"][i])
+	text = results["text"][i]
+	if conf > args["min_conf"] and text in kylanimet:
+		kylat.append(i)
+
+PALSTAW=1134
+PALSTAH=1620
+
+if len(kylat)==4:
+    y1=results["top"][kylat[0]]
+    x1=results["left"][kylat[0]]
+    x2=results["left"][kylat[1]]
+
+    kallistus=(x2-x1)/PALSTAH
+    palstax=x1-kallistus*y1
+
+    print("Kallistus: {}".format(kallistus))
+    print("PalstaX1: {}".format(palstax))
+    print("PalstaX2: {}".format(palstax+PALSTAW))
+
+
 
 for i in range(0, len(results["text"])):
 	# extract the bounding box coordinates of the text region from
@@ -70,10 +94,10 @@ for i in range(0, len(results["text"])):
 	text = results["text"][i]
 	conf = int(results["conf"][i])
 
-
+	korkeusy = results["top"][kylat[0]]-y
 
     # filter out weak confidence text localizations
-	if conf > args["min_conf"] and (h > 37 and h < 41) and w == 1:
+	if conf > args["min_conf"] and ((h > 37 and h < 41) or abs(korkeusy-82)<5) and w == 1:
 		# display the confidence and text to our terminal
 		print("Confidence: {}".format(conf))
 		print("x: {}".format(x))
@@ -88,34 +112,84 @@ for i in range(0, len(results["text"])):
 		print("Text: {}".format(text))
 		print("")
         
-		sukunimet.append(text)
+		sukunimet.append(i)
 		if(b==1):
 		    topleft=i
 
-	if conf > args["min_conf"] and text in ["Kirkonkylä", "Kuivalahti", "Verkkokari", "Irjanne", "Lapijoki", "Kainu", "Uusi","Riiko","Linnamaa"]:
+samat=poistaErilaiset(list(map(lambda s: results["text"][s], sukunimet)))
+print(samat)
+
+
+for i in sukunimet:
+	# extract the bounding box coordinates of the text region from
+	# the current result
+	x = results["left"][i]
+	y = results["top"][i]
+	w = results["width"][i]
+	h = results["height"][i]
+
+	b = results["block_num"][i]
+	p = results["par_num"][i]
+	l = results["line_num"][i]
+	w = results["word_num"][i]
+
+	# extract the OCR text itself along with the confidence of the
+	# text localization
+	text = results["text"][i]
+	conf = int(results["conf"][i])
+
+	korkeusy = results["top"][kylat[0]]-y
+
+    # filter out weak confidence text localizations
+	if text in samat:
+		# display the confidence and text to our terminal
 		print("Confidence: {}".format(conf))
 		print("x: {}".format(x))
-		print("y: {}".format(y))
-		print("h: {}".format(h))
-
-		print("b: {}".format(b))
-		print("p: {}".format(p))
-		print("l: {}".format(l))
-		print("w: {}".format(w))
-
 		print("Text: {}".format(text))
 		print("")
-		kylat.append(i)
 
-PALSTAX=1134
-PALSTAY=1620
+print(sukunimet)
 
-if len(kylat)==4:
-    x1=results["left"][kylat[0]]
-    x2=results["left"][kylat[1]]
-    kallistus=(x2-x1)/PALSTAY
-    print("Kallistus: {}".format(kallistus))
 
+for i in range(sukunimet[0], sukunimet[1]):
+	# extract the bounding box coordinates of the text region from
+	# the current result
+	x = results["left"][i]
+	y = results["top"][i]
+	w = results["width"][i]
+	h = results["height"][i]
+
+	b = results["block_num"][i]
+	p = results["par_num"][i]
+	l = results["line_num"][i]
+	w = results["word_num"][i]
+
+	# extract the OCR text itself along with the confidence of the
+	# text localization
+	text = results["text"][i]
+	conf = int(results["conf"][i])
+
+    # filter out weak confidence text localizations
+	if conf > args["min_conf"]:
+		# display the confidence and text to our terminal
+		#print("Confidence: {}".format(conf))
+		#print("x: {}".format(x))
+		#print("y: {}".format(y))
+		#print("h: {}".format(h))
+		#print("Text: {}".format(text))
+		#print("x: {}".format(x))
+		#print("y: {}".format(y))
+		#print("h: {}".format(h))
+
+		#print("b: {}".format(b))
+		#print("p: {}".format(p))
+		#print("l: {}".format(l))
+		#print("w: {}".format(w))
+
+		print ('\n' if w==1 else '', end='')
+		print("{} ".format(text), end='')
+
+exit(0)
 
 
 if topleft>0:
@@ -124,7 +198,7 @@ if topleft>0:
     kallistus=-1
 
 
-    TOLE=3
+    TOLE=18
 
     print("-------------------")
 
@@ -138,18 +212,19 @@ if topleft>0:
 	    conf = int(results["conf"][i])
 	    
 	    if conf > args["min_conf"]:
-	        if(abs(abs(toplefty-y)-PALSTAY) < TOLE):
-	            bottomleft=i
-	            kallistus=(x-topleftx)/PALSTAY
-	            print("Kallistus: {}".format(kallistus))
+	        if kallistus == -1:
+	            if(abs(abs(toplefty-y)-PALSTAH) < TOLE):
+	                bottomleft=i
+	                kallistus=(x-topleftx)/PALSTAH
+	                print("Kallistus: {}".format(kallistus))
 	        if kallistus != -1:
-	            if abs(abs(topleftx-x)-PALSTAX)<TOLE \
-                    and abs(toplefty-(y+PALSTAX*kallistus))<TOLE:
+	            if abs(abs(topleftx-x)-PALSTAW)<TOLE \
+                    and abs(toplefty-(y+PALSTAW*kallistus))<TOLE:
 	                topright=i
 	            #if(abs(math.sqrt((topleftx-x)*(topleftx-x)+(toplefty-y)*(toplefty-y)) - 1976) < TOLE):
 	            #    bottomright=i
-	            if abs(abs(topleftx-(x-PALSTAY*kallistus))-PALSTAX) < TOLE \
-                    and abs(toplefty+PALSTAY-(y+PALSTAX*kallistus)) < TOLE:
+	            if abs(abs(topleftx-(x-PALSTAH*kallistus))-PALSTAW) < TOLE \
+                    and abs(toplefty+PALSTAH-(y+PALSTAW*kallistus)) < TOLE:
 	                bottomright=i
 
     for i in [topleft, bottomleft, topright, bottomright]:
