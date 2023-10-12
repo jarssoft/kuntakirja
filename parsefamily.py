@@ -119,6 +119,7 @@ for i in range(0, len(results["text"])):
 samat=poistaErilaiset(list(map(lambda s: results["text"][s], sukunimet)))
 print(samat)
 
+paasukunumet=[]
 
 for i in sukunimet:
 	# extract the bounding box coordinates of the text region from
@@ -147,47 +148,50 @@ for i in sukunimet:
 		print("x: {}".format(x))
 		print("Text: {}".format(text))
 		print("")
+		paasukunumet.append(i)
 
-print(sukunimet)
+paasukunumet.append(len(results["text"])-1)
+print(paasukunumet)
 
+for a in range(0,4):
+    print("\n-------------------")
+    for i in range(paasukunumet[0+a], paasukunumet[1+a]):
+	    # extract the bounding box coordinates of the text region from
+	    # the current result
+	    x = results["left"][i]
+	    y = results["top"][i]
+	    w = results["width"][i]
+	    h = results["height"][i]
 
-for i in range(sukunimet[0], sukunimet[1]):
-	# extract the bounding box coordinates of the text region from
-	# the current result
-	x = results["left"][i]
-	y = results["top"][i]
-	w = results["width"][i]
-	h = results["height"][i]
+	    b = results["block_num"][i]
+	    p = results["par_num"][i]
+	    l = results["line_num"][i]
+	    w = results["word_num"][i]
 
-	b = results["block_num"][i]
-	p = results["par_num"][i]
-	l = results["line_num"][i]
-	w = results["word_num"][i]
+	    # extract the OCR text itself along with the confidence of the
+	    # text localization
+	    text = results["text"][i]
+	    conf = int(results["conf"][i])
 
-	# extract the OCR text itself along with the confidence of the
-	# text localization
-	text = results["text"][i]
-	conf = int(results["conf"][i])
+        # filter out weak confidence text localizations
+	    if conf > args["min_conf"]:
+		    # display the confidence and text to our terminal
+		    #print("Confidence: {}".format(conf))
+		    #print("x: {}".format(x))
+		    #print("y: {}".format(y))
+		    #print("h: {}".format(h))
+		    #print("Text: {}".format(text))
+		    #print("x: {}".format(x))
+		    #print("y: {}".format(y))
+		    #print("h: {}".format(h))
 
-    # filter out weak confidence text localizations
-	if conf > args["min_conf"]:
-		# display the confidence and text to our terminal
-		#print("Confidence: {}".format(conf))
-		#print("x: {}".format(x))
-		#print("y: {}".format(y))
-		#print("h: {}".format(h))
-		#print("Text: {}".format(text))
-		#print("x: {}".format(x))
-		#print("y: {}".format(y))
-		#print("h: {}".format(h))
+		    #print("b: {}".format(b))
+		    #print("p: {}".format(p))
+		    #print("l: {}".format(l))
+		    #print("w: {}".format(w))
 
-		#print("b: {}".format(b))
-		#print("p: {}".format(p))
-		#print("l: {}".format(l))
-		#print("w: {}".format(w))
-
-		print ('\n' if w==1 else '', end='')
-		print("{} ".format(text), end='')
+		    print ('\n' if w==1 else '', end='')
+		    print("{} ".format(text), end='')
 
 exit(0)
 
