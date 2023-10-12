@@ -75,7 +75,7 @@ if len(kylat)==4:
     print("PalstaX2: {}".format(palstax+PALSTAW))
 
 
-
+pituus=0
 for i in range(0, len(results["text"])):
 	# extract the bounding box coordinates of the text region from
 	# the current result
@@ -97,7 +97,7 @@ for i in range(0, len(results["text"])):
 	korkeusy = results["top"][kylat[0]]-y
 
     # filter out weak confidence text localizations
-	if conf > args["min_conf"] and ((h > 37 and h < 41) or abs(korkeusy-82)<5) and w == 1:
+	if conf > args["min_conf"] and ((h > 36 and h < 47) or abs(korkeusy-82)<5) and w == 1:
 		# display the confidence and text to our terminal
 		print("Confidence: {}".format(conf))
 		print("x: {}".format(x))
@@ -111,10 +111,12 @@ for i in range(0, len(results["text"])):
 
 		print("Text: {}".format(text))
 		print("")
-        
+
+
 		sukunimet.append(i)
-		if(b==1):
+		if(pituus==0):
 		    topleft=i
+		pituus+=len(text)
 
 samat=poistaErilaiset(list(map(lambda s: results["text"][s], sukunimet)))
 print(samat)
@@ -150,6 +152,7 @@ for i in sukunimet:
 		print("")
 		paasukunumet.append(i)
 
+assert(len(paasukunumet)==4)
 paasukunumet.append(len(results["text"])-1)
 print(paasukunumet)
 
@@ -200,7 +203,6 @@ if topleft>0:
     topleftx = results["left"][topleft]
     toplefty = results["top"][topleft]
     kallistus=-1
-
 
     TOLE=18
 
