@@ -40,7 +40,7 @@ sukunimet=[]
 kylat=[]
 topleft=-1
 kylanimet=["Kirkonkylä", "Kuivalahti", "Verkkokari", \
-        "Irjanne", "Lapijoki", "Kainu", "Uusi", "Riiko", "Linnamaa", "Saari"]
+        "Irjanne", "Lapijoki", "Kainu", "Uusi", "Riiko", "Linnamaa", "Saari", "Sydänmaa", "Orjasaari", "Vuojoki"]
     
 
 assert(ero("Jari", "Ilona") == 255+11)
@@ -173,7 +173,8 @@ for a in range(0,4):
     yoffset = results["top"][paasukunumet[0+a]]
     lasty=-1
     
-    for i in range(paasukunumet[0+a], paasukunumet[1+a]):
+    for i in range(paasukunumet[a], paasukunumet[a+1]):
+
 	    # extract the bounding box coordinates of the text region from
 	    # the current result
 	    x = results["left"][i]
@@ -212,12 +213,20 @@ for a in range(0,4):
 		    #print("{} ".format(text), end='')
 
 		    if w==1:
-		        print(lasty, rivi)
 		        if(len(rivi)>0):
+		            print(lasty, rivi)
 
 		            if(lasty<365 and "asukas1" not in perhe):
-		                if(rivi[0] in kylanimet):
-		                    perhe["kyla"]=rivi
+		                if(abs(lasty-48)<4):
+		                    if(rivi[0] in kylanimet):
+		                        perhe["kyla"]=rivi
+		                    else:
+		                        perhe["tontti"]=rivi
+		                if(abs(lasty-82)<5):
+		                    if(rivi[0] in kylanimet):
+		                        if("kyla" in perhe):
+		                            perhe["tontti"]=perhe["kyla"]
+		                        perhe["kyla"]=rivi
 		                if(rivi[0] == "Pinta-ala:"):
 		                    perhe["pinta-ala"]=rivi
 		                if(rivi[0] == "Rakennusmateriaali:"):
