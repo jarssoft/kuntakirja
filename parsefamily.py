@@ -42,6 +42,18 @@ topleft=-1
 kylanimet=["Kirkonkylä", "Kuivalahti", "Verkkokari", \
         "Irjanne", "Lapijoki", "Kainu", "Uusi", "Riiko", "Linnamaa", "Saari", "Sydänmaa", "Orjasaari", "Vuojoki"]
     
+ammatit=["eläkeläinen", "koneenkuljettaja", "varastonhoitaja", "maanviljelijä", \
+        "käytönhoitaja", "tradenomi", "siistijä", "kanslisti", "johtaja", "parturi-kampaaja", "hitsaaja",\
+        "kartanpiirtäjä", "merimies", "pituusleikkurinhoitaja", "laitoshuoltaja", "yhteyspäällikkö", \
+        "palveluneuvoja", "yrittäjä", "baariapulainen", "myyjä", "leipomotyöntekijä", "merkantti", \
+        "projekti-insinööri", "laborantti", "matematiikanopettaja", "käsityönopettaja", "puuseppä", \
+        "elektroniikkatyöntekijä", "operaattori" ,"perushoitaja", "emäntä", "katsastusinsinööri", \
+        "apulaiskansiisti", "pankkitoimihenkilö", "puutarhayrittäjä", "paperityöntekijä", "kotiäiti", \
+        "hoitaja", "insinööri", "sairaanhoitaja", "kauppapuutarhuri", "sairaala-apulainen", "maatalousyrittäjä",\
+        "muusikko", "asiakaspalveluhenkilö", "muurari", "työsuunnittelija", "autonasentaja", "kassamyyjä", \
+        "kirjanpitäjä", "autonkuljettaja", "pitokokki", "kuljetusyrittäjä", "muovityöntekijä",\
+        "asfalttilevittäjänkuljettaja", "sihteeri", "maalari", "siivooja", "ATK-suunnittelija", \
+        "satamatyönjohtaja", "tutkimusteknikko", "ylioppilas", "instrumenttiasentaja", "palkanlaskija"]
 
 assert(ero("Jari", "Ilona") == 255+11)
 assert(ero("Saari", "Salonen") == 0)
@@ -236,11 +248,11 @@ for a in range(0,4):
 		                if(rivi[0] == "Laajennus"):
 		                    perhe["laajennus/remontti"]=rivi
                 
-		            if(lasty>920 and "lapset" not in perhe):
+		            if lasty>920 and "lapset" not in perhe and "kuvaus" not in perhe:
 		                if(rivi[0] == "avioliitto" or rivi[0] == "avoliitto"):
 		                    perhe["liitto"]=rivi
 		                else:
-		                    if('s.' in rivi):
+		                    if('s.' in rivi or perhe["sukunimi"] in rivi):
 		                        if "asukas1" not in perhe:
 		                            perhe["asukas1"]=rivi
 		                            assert(lasty>920)
@@ -249,11 +261,17 @@ for a in range(0,4):
 		                            assert(lasty>920)
 		                    else:
 		                        if "asukas1" in perhe and "ammatti1" not in perhe:
-		                            perhe["ammatti1"]=rivi
-		                            assert(lasty>920)
+		                            if(rivi[-1] in ammatit):
+		                                perhe["ammatti1"]=rivi
+		                                assert(lasty>920)
+		                            else:
+		                                print("!!!!!!!!!!!!!!!!!!")
 		                        if "asukas2" in perhe and "ammatti2" not in perhe:
-		                            perhe["ammatti2"]=rivi
-		                            assert(lasty>920)
+		                            if(rivi[-1] in ammatit):
+		                                perhe["ammatti2"]=rivi
+		                                assert(lasty>920)
+		                            else:
+		                                print("!!!!!!!!!!!!!!!!!!")
 
 		            if(lasty>985 and "asukas1" in perhe and "kuvaus" not in perhe):
 		                if(rivi[0] == "Lapset:"):
