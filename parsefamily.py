@@ -13,6 +13,16 @@ ap.add_argument("-c", "--min-conf", type=int, default=0,
 args = vars(ap.parse_args())
 
 
+def poistaTavuviivat(lause):
+    return list(map(lambda a : (a+" " if (a=="" or a[-1]!='-') else a[0:-1]) , lause))
+
+#print(poistaTavuviivat(["Tämä","on","koe-","kutsu."]))
+#print(poistaTavuviivat(["Tämä","on","kutsu", "kokeilemista", "varten."]))
+#print(poistaTavuviivat(["Tämä","on","-"]))
+#print(poistaTavuviivat(["-"]))
+#print(poistaTavuviivat([]))
+#exit(0)
+
 # load the input image, convert it from BGR to RGB channel ordering,
 # and use Tesseract to localize each area of text in the input image
 image = cv2.imread(args["image"])
@@ -66,6 +76,9 @@ def etaisyydet(nimet):
             erot+=ero(nimi, vnimi)
         pal.append(erot)
     return pal
+
+
+
 
 # Poistaa nimet jotka ovat muita kauempana aakkosjärjestyksessä
 def poistaErilaiset(nimet):    
@@ -283,7 +296,7 @@ for a in range(0,4):
 		            if(lasty>985 and "asukas1" in perhe and rivi[0] != "Lapset:"):
 		                if(rivi[0] != "Lapset:" and lasty-lastlasty>48 and "kuvaus" not in perhe):
 		                    perhe["kuvaus"]=rivi
-		                if "kuvaus" in perhe:
+		                elif "kuvaus" in perhe:
 		                    perhe["kuvaus"]+=rivi
 
 
@@ -297,6 +310,12 @@ for a in range(0,4):
 
     print()
     printdict(perhe)
+
+    perhe["kuvaus"]="".join(poistaTavuviivat(perhe["kuvaus"]))
+
+    print()
+    printdict(perhe)
+
 exit(0)
 
 
