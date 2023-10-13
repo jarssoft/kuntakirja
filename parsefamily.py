@@ -29,13 +29,19 @@ results = pytesseract.image_to_data(rgb, output_type=Output.DICT, lang='fin')
 
 # loop over each of the individual text localizations
 
+def printdict(cars):
+    for value in cars:
+        print (value,':',cars[value])
+
 def ero(nimi, vnimi):
     return abs(ord(nimi[0])-ord(vnimi[0]))*255 + abs(ord(nimi[1])-ord(vnimi[1]))
 
 sukunimet=[]
 kylat=[]
 topleft=-1
-kylanimet=["Kirkonkylä", "Kuivalahti", "Verkkokari", "Irjanne", "Lapijoki", "Kainu", "Uusi", "Riiko", "Linnamaa"]
+kylanimet=["Kirkonkylä", "Kuivalahti", "Verkkokari", \
+        "Irjanne", "Lapijoki", "Kainu", "Uusi", "Riiko", "Linnamaa", "Saari"]
+    
 
 assert(ero("Jari", "Ilona") == 255+11)
 assert(ero("Saari", "Salonen") == 0)
@@ -156,13 +162,22 @@ assert(len(paasukunumet)==4)
 paasukunumet.append(len(results["text"])-1)
 print(paasukunumet)
 
+
+
+lasty=0
 for a in range(0,4):
     print("\n-------------------")
+
+    rivi=[]
+    perhe = dict(sukunimi = results["text"][paasukunumet[0+a]])
+    yoffset = results["top"][paasukunumet[0+a]]
+    lasty=-1
+    
     for i in range(paasukunumet[0+a], paasukunumet[1+a]):
 	    # extract the bounding box coordinates of the text region from
 	    # the current result
 	    x = results["left"][i]
-	    y = results["top"][i]
+	    y = results["top"][i] - yoffset
 	    w = results["width"][i]
 	    h = results["height"][i]
 
@@ -193,9 +208,67 @@ for a in range(0,4):
 		    #print("l: {}".format(l))
 		    #print("w: {}".format(w))
 
-		    print ('\n' if w==1 else '', end='')
-		    print("{} ".format(text), end='')
+		    #print ('\n' if w==1 else '', end='')
+		    #print("{} ".format(text), end='')
 
+		    if w==1:
+		        print(lasty, rivi)
+		        if(len(rivi)>0):
+
+		            if(lasty<365 and "asukas1" not in perhe):
+		                if(rivi[0] in kylanimet):
+		                    perhe["kyla"]=rivi
+		                if(rivi[0] == "Pinta-ala:"):
+		                    perhe["pinta-ala"]=rivi
+		                if(rivi[0] == "Rakennusmateriaali:"):
+		                    perhe["rakennusmateriaali"]=rivi
+		                if(rivi[0] == "Rakennusvuosi:"):
+		                    perhe["rakennusvuosi"]=rivi
+		                if(rivi[0] == "Laajennus"):
+		                    perhe["laajennus/remontti"]=rivi
+                
+		            if(lasty>920 and "lapset" not in perhe):
+		                if(rivi[0] == "avioliitto" or rivi[0] == "avoliitto"):
+		                    perhe["liitto"]=rivi
+		                else:
+		                    if('s.' in rivi):
+		                        if "asukas1" not in perhe:
+		                            perhe["asukas1"]=rivi
+		                            assert(lasty>920)
+		                        else:
+		                            perhe["asukas2"]=rivi
+		                            assert(lasty>920)
+		                    else:
+		                        if "asukas1" in perhe and "ammatti1" not in perhe:
+		                            perhe["ammatti1"]=rivi
+		                            assert(lasty>920)
+		                        if "asukas2" in perhe and "ammatti2" not in perhe:
+		                            perhe["ammatti2"]=rivi
+		                            assert(lasty>920)
+
+		            if(lasty>985 and "asukas1" in perhe):
+		                if(rivi[0] == "Lapset:"):
+		                    perhe["lapset"]=rivi
+
+		                """
+		                    else:
+		                        if "kuvaus" in perhe:
+		                            perhe["kuvaus"]=perhe["kuvaus"]+rivi
+		                        if "lapset" in perhe:
+		                            if len(perhe["lapset"])==1:
+		                                perhe["lapset"]+=rivi
+		                        if "asukas1" in perhe:
+		                            if "kuvaus" not in perhe:
+		                                perhe["kuvaus"]=rivi
+		                """
+		            rivi=[]
+		        lasty=y
+
+		    rivi.append(text)
+		    
+
+    print()
+    printdict(perhe)
 exit(0)
 
 
