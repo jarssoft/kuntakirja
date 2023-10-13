@@ -246,23 +246,24 @@ for a in range(0,4):
 		                            perhe["ammatti2"]=rivi
 		                            assert(lasty>920)
 
-		            if(lasty>985 and "asukas1" in perhe):
+		            if(lasty>985 and "asukas1" in perhe and "kuvaus" not in perhe):
 		                if(rivi[0] == "Lapset:"):
 		                    perhe["lapset"]=rivi
+		                else: 
+		                    if "lapset" in perhe and lasty-lastlasty<48:
+		                        perhe["lapset"]+=rivi
 
-		                """
-		                    else:
-		                        if "kuvaus" in perhe:
-		                            perhe["kuvaus"]=perhe["kuvaus"]+rivi
-		                        if "lapset" in perhe:
-		                            if len(perhe["lapset"])==1:
-		                                perhe["lapset"]+=rivi
-		                        if "asukas1" in perhe:
-		                            if "kuvaus" not in perhe:
-		                                perhe["kuvaus"]=rivi
-		                """
-		            rivi=[]
+		            if(lasty>985 and "asukas1" in perhe and rivi[0] != "Lapset:"):
+		                if(rivi[0] != "Lapset:" and lasty-lastlasty>48 and "kuvaus" not in perhe):
+		                    perhe["kuvaus"]=rivi
+		                if "kuvaus" in perhe:
+		                    perhe["kuvaus"]+=rivi
+
+
+		        rivi=[]
+		        lastlasty=lasty
 		        lasty=y
+
 
 		    rivi.append(text)
 		    
