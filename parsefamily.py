@@ -58,6 +58,20 @@ print(viimeistelePintaala(['Pinta-ala:', '132', 'ha,', 'josta', 'peltoa', '43', 
 print(viimeistelePintaala(['Pinta-ala:', 'n.', '2', 'ha']))
 print(viimeistelePintaala(['Pinta-ala:', 'peltoa', '26', 'ha,', 'metsää', '24', 'ha']))
 
+
+def viimeisteleRakennusvuosi(lause):    
+    assert(len(lause)>=2)
+    if len(lause[1])!=4:
+        return None
+    try:
+        pal = int(lause[1])
+        return pal
+    except ValueError:
+        return None
+
+print(viimeisteleRakennusvuosi(['Rakennusvuosi:', '1800-luvun', 'puoliväli']))
+print(viimeisteleRakennusvuosi(['Rakennusvuosi:', '1986']))
+
 #exit(0)
 
 
@@ -356,6 +370,13 @@ for a in range(0,4):
         perhe["pinta-ala"]=viimeistelePintaala(perhe["pinta-ala"])
         if(perhe["pinta-ala"]==None):
             del perhe["pinta-ala"]
+
+    if("rakennusvuosi" in perhe):
+        perhe["rakennusvuosi"]=viimeisteleRakennusvuosi(perhe["rakennusvuosi"])
+        if(perhe["rakennusvuosi"]==None):
+            del perhe["rakennusvuosi"]
+
+
     perhe["rakennusmateriaali"]=list(viimeisteleMateriaali(perhe["rakennusmateriaali"]))
     if("kuvaus" in perhe):
         perhe["kuvaus"]="".join(poistaTavuviivat(perhe["kuvaus"]))
