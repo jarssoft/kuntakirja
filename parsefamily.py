@@ -16,12 +16,50 @@ args = vars(ap.parse_args())
 def poistaTavuviivat(lause):
     return list(map(lambda a : (a+" " if (a=="" or a[-1]!='-') else a[0:-1]) , lause))
 
-#print(poistaTavuviivat(["Tämä","on","koe-","kutsu."]))
-#print(poistaTavuviivat(["Tämä","on","kutsu", "kokeilemista", "varten."]))
-#print(poistaTavuviivat(["Tämä","on","-"]))
-#print(poistaTavuviivat(["-"]))
-#print(poistaTavuviivat([]))
+def poistaPilkut(lause):
+    return list(map(lambda a : (a if (a=="" or a[-1]!=',') else a[0:-1]) , lause))
+
+print(poistaTavuviivat(["Tämä","on","koe-","kutsu."]))
+print(poistaTavuviivat(["Tämä","on","kutsu", "kokeilemista", "varten."]))
+print(poistaTavuviivat(["Tämä","on","-"]))
+print(poistaTavuviivat(["-"]))
+print(poistaTavuviivat([]))
+
+def viimeisteleMateriaali(lause):
+    lause=poistaPilkut(lause)
+    return list(filter(lambda a : a in ["hirsi", "lauta", "puu", "tiili"], lause))
+
+print(viimeisteleMateriaali(['Rakennusmateriaali:', 'hirsi', 'lauta', 'puu', 'tiili']))
+print(viimeisteleMateriaali(['Rakennusmateriaali:', 'tiili']))
+print(viimeisteleMateriaali(['Rakennusmateriaali:', 'hirsi,', 'lauta']))
+
+def viimeistelePintaala(lause):    
+    lause=poistaPilkut(lause)
+    lause=list(filter(lambda a : a not in ["n."], lause))
+    if(lause[2] not in ["m?", "m2", "ha"]):
+        return None
+    assert(len(lause)>=3)
+    
+
+    try:
+        pal = float(lause[1].replace(",","."))
+    except ValueError:
+        return None
+
+
+    if(lause[2] in ["m?", "m2"]):
+        return pal/10000.0
+    if(lause[2] in ["ha"]):
+        return pal
+
+print(viimeistelePintaala(['Pinta-ala:', '1,2', 'ha']))
+print(viimeistelePintaala(['Pinta-ala:', '3000', 'm?']))
+print(viimeistelePintaala(['Pinta-ala:', '132', 'ha,', 'josta', 'peltoa', '43', 'ha']))
+print(viimeistelePintaala(['Pinta-ala:', 'n.', '2', 'ha']))
+print(viimeistelePintaala(['Pinta-ala:', 'peltoa', '26', 'ha,', 'metsää', '24', 'ha']))
+
 #exit(0)
+
 
 # load the input image, convert it from BGR to RGB channel ordering,
 # and use Tesseract to localize each area of text in the input image
@@ -49,10 +87,11 @@ def ero(nimi, vnimi):
 sukunimet=[]
 kylat=[]
 topleft=-1
-kylanimet=["Kirkonkylä", "Kuivalahti", "Verkkokari", \
-        "Irjanne", "Lapijoki", "Kainu", "Uusi", "Riiko", "Linnamaa", "Saari", "Sydänmaa", "Orjasaari", "Vuojoki"]
+kylanimet=["Kirkonkylä", "Kuivalahti", "Verkkokari", "Irjanne", "Lapijoki", "Kainu", "Uusi", \
+        "Riiko", "Linnamaa", "Saari", "Sydänmaa", "Orjasaari", "Vuojoki", "Huhta", "Köykkä", \
+        "Pappila", "Vaimala"]
     
-ammatit=["eläkeläinen", "koneenkuljettaja", "varastonhoitaja", "maanviljelijä", \
+ammatit=["eläkeläinen", "koneenkuljettaja", "varastomies", "varastonhoitaja", "maanviljelijä", \
         "käytönhoitaja", "tradenomi", "siistijä", "kanslisti", "johtaja", "parturi-kampaaja", "hitsaaja",\
         "kartanpiirtäjä", "merimies", "pituusleikkurinhoitaja", "laitoshuoltaja", "yhteyspäällikkö", \
         "palveluneuvoja", "yrittäjä", "baariapulainen", "myyjä", "leipomotyöntekijä", "merkantti", \
@@ -63,7 +102,8 @@ ammatit=["eläkeläinen", "koneenkuljettaja", "varastonhoitaja", "maanviljelijä
         "muusikko", "asiakaspalveluhenkilö", "muurari", "työsuunnittelija", "autonasentaja", "kassamyyjä", \
         "kirjanpitäjä", "autonkuljettaja", "pitokokki", "kuljetusyrittäjä", "muovityöntekijä",\
         "asfalttilevittäjänkuljettaja", "sihteeri", "maalari", "siivooja", "ATK-suunnittelija", \
-        "satamatyönjohtaja", "tutkimusteknikko", "ylioppilas", "instrumenttiasentaja", "palkanlaskija"]
+        "satamatyönjohtaja", "tutkimusteknikko", "ylioppilas", "instrumenttiasentaja", "palkanlaskija", \
+        "tutkimusinsinööri", "tuotantoinsinööri", "koneahtaaja"]
 
 assert(ero("Jari", "Ilona") == 255+11)
 assert(ero("Saari", "Salonen") == 0)
@@ -244,14 +284,14 @@ for a in range(0,4):
 		            if(lasty<365 and "asukas1" not in perhe):
 		                if(abs(lasty-48)<4):
 		                    if(rivi[0] in kylanimet):
-		                        perhe["kyla"]=rivi
+		                        perhe["kyla"]=" ".join(rivi)
 		                    else:
-		                        perhe["tontti"]=rivi
+		                        perhe["tontti"]=" ".join(rivi)
 		                if(abs(lasty-82)<5):
 		                    if(rivi[0] in kylanimet):
 		                        if("kyla" in perhe):
 		                            perhe["tontti"]=perhe["kyla"]
-		                        perhe["kyla"]=rivi
+		                        perhe["kyla"]=" ".join(rivi)
 		                if(rivi[0] == "Pinta-ala:"):
 		                    perhe["pinta-ala"]=rivi
 		                if(rivi[0] == "Rakennusmateriaali:"):
@@ -273,7 +313,7 @@ for a in range(0,4):
 		                            perhe["asukas2"]=rivi
 		                            assert(lasty>920)
 		                    else:
-		                        if "asukas1" in perhe and "ammatti1" not in perhe:
+		                        if "asukas1" in perhe and "ammatti1" not in perhe and "asukas2" not in perhe:
 		                            if(rivi[-1] in ammatit):
 		                                perhe["ammatti1"]=rivi
 		                                assert(lasty>920)
@@ -290,11 +330,11 @@ for a in range(0,4):
 		                if(rivi[0] == "Lapset:"):
 		                    perhe["lapset"]=rivi
 		                else: 
-		                    if "lapset" in perhe and lasty-lastlasty<48:
+		                    if "lapset" in perhe and lasty-lastlasty<=50:
 		                        perhe["lapset"]+=rivi
 
 		            if(lasty>985 and "asukas1" in perhe and rivi[0] != "Lapset:"):
-		                if(rivi[0] != "Lapset:" and lasty-lastlasty>48 and "kuvaus" not in perhe):
+		                if(rivi[0] != "Lapset:" and lasty-lastlasty>50 and "kuvaus" not in perhe):
 		                    perhe["kuvaus"]=rivi
 		                elif "kuvaus" in perhe:
 		                    perhe["kuvaus"]+=rivi
@@ -311,7 +351,14 @@ for a in range(0,4):
     print()
     printdict(perhe)
 
-    perhe["kuvaus"]="".join(poistaTavuviivat(perhe["kuvaus"]))
+
+    if("pinta-ala" in perhe):
+        perhe["pinta-ala"]=viimeistelePintaala(perhe["pinta-ala"])
+        if(perhe["pinta-ala"]==None):
+            del perhe["pinta-ala"]
+    perhe["rakennusmateriaali"]=list(viimeisteleMateriaali(perhe["rakennusmateriaali"]))
+    if("kuvaus" in perhe):
+        perhe["kuvaus"]="".join(poistaTavuviivat(perhe["kuvaus"]))
 
     print()
     printdict(perhe)
