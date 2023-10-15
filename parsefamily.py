@@ -80,9 +80,87 @@ def viimeisteleLaajennusTaiRemontti(lause):
     else:
         return None
 
+
 print(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1995']))
 print(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1974,', '1990-91']))
 print(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1952,', '1993']))
+
+def viimeisteleAsukas(lause, ammattilause, psukunimi):   
+    lause=poistaPilkut(lause)
+    mode=0
+    etunimet=[]
+    sukunimi=psukunimi
+    osnimi=None
+    syntymaaika=None
+    syntymapaikka=[]
+    for s in lause:
+        if s in [psukunimi, "Himanen", 'Alhonmäki-Aalonen', 'Vähä-Jusola', 'Ojala', "Elonen","Kellosalmi"]:
+            assert(mode<1)
+            mode=1
+            sukunimi=s
+            continue
+        if s in ['(0.s.','(o.s.','(O.s.']:
+            assert(mode<2)
+            mode=2
+            continue
+        if s == 's.':
+            assert(mode<3)
+            mode=3
+            continue
+        if mode==0:
+            etunimet.append(s)
+            continue
+        if mode==2:
+            osnimi=s[:-1]
+            continue
+        if mode==3:            
+            try:
+                syntymaaika=int(s[-4:])
+            except ValueError:
+                syntymapaikka.append(s)
+            continue
+        if mode==4:
+            syntymapaikka.append(s)
+            continue 
+
+    asukas=dict()
+    asukas["etunimet"]=etunimet
+    if sukunimi != None:
+        asukas["sukunimi"]=sukunimi
+    if osnimi != None:
+        asukas["osnimi"]=osnimi
+    if syntymaaika != None:
+        asukas["syntymäaika"]=syntymaaika
+    if len(syntymapaikka)>0:
+        asukas["syntymäpaikka"]=" ".join(syntymapaikka)
+    asukas["ammatit"]=poistaPilkut(ammattilause)
+    return asukas
+
+print(viimeisteleAsukas(['Anna-Liisa',  'Anttila', '(0.s.', 'Pääkkö),', 's.', '7.10.1934', 'Nivala'], ['maatalouslomittaja,', 'eläkeläinen'], 'Anttila'))
+
+print(viimeisteleAsukas(['Jukka', 'Sakari', 'Anttila,', 's.', '12.1.1961', 'Turku'], ['kuljetusyrittäjä'], 'Anttila'))
+
+print(viimeisteleAsukas(['Aki', 'Aikala,', 's.', '11.4.1960', 'Kurikka'], ['puuseppä'], 'Aikala'))
+
+print(viimeisteleAsukas(['Pasi', 'Markus', 'Aho,', 's.', '21.1.1974', 'Eurajoki'], ['maanviljelijä,', 'käytönhoitaja'], 'Aho'))
+
+print(viimeisteleAsukas(['Tiina', '(o.s.', 'Nieminen),', 's.', '11.3.1965', 'Eurajoki'], ['varastonhoitaja'], 'Anttila'))
+
+print(viimeisteleAsukas(['Aino', 'Helena', '(o.s.', 'Lehtinen),', 's.', '5.3.1932', 'Keuruu'], ['siivooja'], 'Arasmo'))
+
+print(viimeisteleAsukas(['Eeva', 'Esteri', 'Ahlman', '(o.s.', 'Valo),', 's.', '24.12.1922', 'Eurajoki'], ['eläkeläinen'], "Ahlman"))
+
+print(viimeisteleAsukas(['Aku', 'Franz', 'Aro,', 's.', '4.6.1940', 'Eurajoki'], ['maanviljelijä,', 'eläkeläinen'], 'Aro'))
+
+print(viimeisteleAsukas(['Marjatta', 'Ala-Kohtamäki', '(o.s.', 'Karppinen),', 's.', 'Eurajoki'], ['yrittäjä'], 'Ala-Kohtamäki'))
+
+print(viimeisteleAsukas(['Seija', 'Hilma', 'Eufrosyne', '(o.s.', 'Kaukkila),', 's.', '30.12.1941'], [], "Aromaa"))
+
+print(viimeisteleAsukas(['Kaisa', 'Helena', 'Himanen,', 's.', '11.8.1952', 'Sauvo'], ['sihteeri'], "Aro-Heinilä"))
+
+print(viimeisteleAsukas(['Matti', 'Juha,', 's.', '28.12.1959', 'Lappi', 'TI'], ['maanviljelijä'], "Arvela"))
+
+#print(viimeisteleAsukas())
 
 #exit(0)
 
@@ -394,6 +472,24 @@ for a in range(0,4):
             del perhe["laajennus/remontti"]
 
 
+    perhe["asukkaat"]=[viimeisteleAsukas(perhe["asukas1"], 
+                perhe["ammatti1"] if "ammatti1" in perhe else [], 
+                perhe["sukunimi"])]
+
+
+    if("asukas2" in perhe):
+        perhe["asukkaat"].append(viimeisteleAsukas(perhe["asukas2"], 
+                perhe["ammatti2"] if "ammatti2" in perhe else [], 
+                perhe["sukunimi"]))
+
+    if "asukas1" in perhe:
+        del perhe["asukas1"]
+    if "asukas2" in perhe:
+        del perhe["asukas2"]
+    if "ammatti1" in perhe:
+        del perhe["ammatti1"]
+    if "ammatti2" in perhe:
+        del perhe["ammatti2"]
 
     perhe["rakennusmateriaali"]=list(viimeisteleMateriaali(perhe["rakennusmateriaali"]))
     if("kuvaus" in perhe):
