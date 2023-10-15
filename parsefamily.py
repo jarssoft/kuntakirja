@@ -4,6 +4,7 @@ from pytesseract import Output
 import pytesseract
 import argparse
 import cv2
+import copy
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required=True,
@@ -162,7 +163,60 @@ print(viimeisteleAsukas(['Matti', 'Juha,', 's.', '28.12.1959', 'Lappi', 'TI'], [
 
 #print(viimeisteleAsukas())
 
-#exit(0)
+
+
+def viimeisteleLapset(lause):
+    #lause=poistaPilkut(lause)
+    assert lause[0]=="Lapset:"
+    lapset=[]
+    uusilapsi=dict()
+    uusilapsi["etunimet"]=[]
+    kaksoset=[]
+    for s in lause[1:]:
+        if len(s)>=4 and s[0:4].isdigit() and ")" not in s:
+            uusilapsi["syntynyt"]=int(s[0:4])
+            lapset.append(copy.deepcopy(uusilapsi))
+            uusilapsi==dict()
+            uusilapsi["etunimet"]=[]
+            for k in kaksoset:
+                k["syntynyt"]=int(s[0:4])
+                lapset.append(copy.deepcopy(k))
+            kaksoset=[]
+        elif (s=="ja"):
+                kaksoset.append(copy.deepcopy(uusilapsi))
+                uusilapsi["etunimet"]=[]
+        else:
+            if(s[0].isupper()) and s[-1]!=":":
+                if(s[-1]==","):
+                    uusilapsi["etunimet"].append(s[0:-1])
+                    lapset.append(copy.deepcopy(uusilapsi))
+                    uusilapsi==dict()
+                    uusilapsi["etunimet"]=[]
+                else:
+                    uusilapsi["etunimet"].append(s)
+                    assert(len(uusilapsi["etunimet"])<=3)
+    if(len(uusilapsi["etunimet"])>0):
+        lapset.append(copy.deepcopy(uusilapsi))
+    return lapset
+
+print(viimeisteleLapset(['Lapset:', 'Tommi', 'Tapani', '1980,', 'Laura-Kaisa', '1983,', 'Teemu', 'Juhani', '1990,']))
+
+print(viimeisteleLapset(['Lapset:', 'Tarja', '1961,', 'Kirsi', '1963,', 'Heli', '1967,', 'Merja', '1970,', 'Pasi', '1974']))
+
+print(viimeisteleLapset(['Lapset:', 'Outin:', 'Sanna', '1981', 'sairaanhoitajaopiskelija,', 'Aleksi', '1982', 'mate-', 'matiikanopettajaopiskelija,', 'Ilmari', '1989']))
+
+print(viimeisteleLapset(['Lapset:', 'Leena', 'Mirjami', '1957,', 'Jaana', 'Kristiina', 'ja', 'Jukka', 'Sakari', '1961,', 'Jarmo', 'Kalevi', '1963,', 'Elina', 'Anna-Liisa', '1966,', 'Tuula', 'Katriina', '1970']))
+
+print(viimeisteleLapset(['Lapset:', 'Kari', 'Olavi', '1954,', 'Ari', 'Tapio', '1956', '(k.', '1959),', 'Outi', 'Helena', '1961', '(k.']))
+
+print(viimeisteleLapset(['Lapset:', 'Janica', '1988,', 'Susanne', '1989,', 'Jonathan', 'ja', 'Robin', '1992']))
+
+print(viimeisteleLapset(['Lapset:', 'Kirsi,', 'Riia']))
+
+
+#print(viimeisteleLapset())
+
+#exit(0) ######################################################################
 
 
 # load the input image, convert it from BGR to RGB channel ordering,
@@ -490,6 +544,9 @@ for a in range(0,4):
         del perhe["ammatti1"]
     if "ammatti2" in perhe:
         del perhe["ammatti2"]
+
+    if("lapset" in perhe):
+        perhe["lapset"] = viimeisteleLapset(perhe["lapset"])
 
     perhe["rakennusmateriaali"]=list(viimeisteleMateriaali(perhe["rakennusmateriaali"]))
     if("kuvaus" in perhe):
