@@ -72,6 +72,18 @@ def viimeisteleRakennusvuosi(lause):
 print(viimeisteleRakennusvuosi(['Rakennusvuosi:', '1800-luvun', 'puoliväli']))
 print(viimeisteleRakennusvuosi(['Rakennusvuosi:', '1986']))
 
+
+
+def viimeisteleLaajennusTaiRemontti(lause):    
+    if len(lause)>3 and lause[0]=='Laajennus' and lause[2]=='remontti:':
+        return " ".join(lause[3:])
+    else:
+        return None
+
+print(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1995']))
+print(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1974,', '1990-91']))
+print(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1952,', '1993']))
+
 #exit(0)
 
 
@@ -375,6 +387,12 @@ for a in range(0,4):
         perhe["rakennusvuosi"]=viimeisteleRakennusvuosi(perhe["rakennusvuosi"])
         if(perhe["rakennusvuosi"]==None):
             del perhe["rakennusvuosi"]
+
+    if("laajennus/remontti" in perhe):
+        perhe["laajennus/remontti"]=viimeisteleLaajennusTaiRemontti(perhe["laajennus/remontti"])
+        if(perhe["laajennus/remontti"]==None):
+            del perhe["laajennus/remontti"]
+
 
 
     perhe["rakennusmateriaali"]=list(viimeisteleMateriaali(perhe["rakennusmateriaali"]))
