@@ -216,6 +216,17 @@ print(viimeisteleLapset(['Lapset:', 'Kirsi,', 'Riia']))
 
 #print(viimeisteleLapset())
 
+def viimeisteleLiitto(lause):    
+    assert(len(lause)>=1)
+    liitto = dict(tyyppi=lause[0])
+    if(len(lause)>1):
+        liitto["alkaen"]=int(lause[1])
+    return liitto
+
+print(viimeisteleLiitto(['avioliitto', '2002']))
+print(viimeisteleLiitto(['avoliitto']))
+print(viimeisteleLiitto(['avoliitto', '1993']))
+
 #exit(0) ######################################################################
 
 
@@ -544,6 +555,9 @@ for a in range(0,4):
         del perhe["ammatti1"]
     if "ammatti2" in perhe:
         del perhe["ammatti2"]
+
+    if "liitto" in perhe:
+        perhe["liitto"]=viimeisteleLiitto(perhe["liitto"])
 
     if("lapset" in perhe):
         perhe["lapset"] = viimeisteleLapset(perhe["lapset"])
