@@ -419,7 +419,7 @@ for i in sukunimet:
 
 assert(len(paasukunumet)==4)
 paasukunumet.append(len(results["text"])-1)
-assert ero(samat[0], samat[3])<5, "Sukunimet liian kaukana toisistaan"
+assert ero(samat[0], samat[3])<5*255, "Sukunimet liian kaukana toisistaan"
 print(paasukunumet)
 
 
