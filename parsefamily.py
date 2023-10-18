@@ -5,6 +5,9 @@ import pytesseract
 import argparse
 import cv2
 import copy
+import pickle
+import os.path
+
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required=True,
@@ -12,6 +15,22 @@ ap.add_argument("-i", "--image", required=True,
 ap.add_argument("-c", "--min-conf", type=int, default=0,
 	help="mininum confidence value to filter weak text detection")
 args = vars(ap.parse_args())
+
+ocrcachefile="cache/"+args["image"]+".cache"
+
+if not os.path.isfile(ocrcachefile):
+    # load the input image, convert it from BGR to RGB channel ordering,
+    # and use Tesseract to localize each area of text in the input image
+    image = cv2.imread(args["image"])
+    rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    results = pytesseract.image_to_data(rgb, output_type=Output.DICT, lang='fin')
+    print(results)
+
+    with open(ocrcachefile, "wb") as fp:   #Pickling
+        pickle.dump(results, fp)
+
+with open(ocrcachefile, "rb") as fp:   # Unpickling
+    results = pickle.load(fp)
 
 
 def poistaTavuviivat(lause):
@@ -230,11 +249,6 @@ print(viimeisteleLiitto(['avoliitto', '1993']))
 #exit(0) ######################################################################
 
 
-# load the input image, convert it from BGR to RGB channel ordering,
-# and use Tesseract to localize each area of text in the input image
-image = cv2.imread(args["image"])
-rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-results = pytesseract.image_to_data(rgb, output_type=Output.DICT, lang='fin')
 
 # 1. blokki
 # ylin,vasemmaisin
