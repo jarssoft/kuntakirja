@@ -14,11 +14,14 @@ ap.add_argument("-i", "--image", required=True,
 	help="path to input image to be OCR'd")
 ap.add_argument("-c", "--min-conf", type=int, default=0,
 	help="mininum confidence value to filter weak text detection")
+ap.add_argument("-r", "--refresh",
+	help="mininum confidence value to filter weak text detection")
+
 args = vars(ap.parse_args())
 
 ocrcachefile="cache/"+args["image"]+".cache"
 
-if not os.path.isfile(ocrcachefile):
+if not os.path.isfile(ocrcachefile) or args["refresh"]:
     # load the input image, convert it from BGR to RGB channel ordering,
     # and use Tesseract to localize each area of text in the input image
     image = cv2.imread("images/"+args["image"])
@@ -288,7 +291,9 @@ ammatit=("eläkeläinen", "varastomies", "varastonhoitaja", "maanviljelijä", "p
         "kirvesmies", "verhooja", "kotirouva", "keittäjä", "kalastaja", "laatoittaja", "ompelija", \
         "koulunkäyntiavustaja", "sähkömestari", "opiskelija", "autoilija", "virkailija", "lomittaja", \
         "palomies", "talonmies", "kiinteistöhuoltomies", "kirjaltaja", "lääke-esittelijä", "rakennusmies", \
-        "käynnissäpitäjä", "työläinen", "rehtori", "stuertti", "tuotekehitysassistentti"
+        "käynnissäpitäjä", "työläinen", "rehtori", "stuertti", "tuotekehitysassistentti", "vartija", \
+        "ohjaaja", "liikkeenharjoittaja", "konstaapeli", "huoltomies", "laitosmies", "kuivaaja", \
+        "näytteenottaja"
         )
 
 assert(ero("Jari", "Ilona") == 255+11)
@@ -319,6 +324,7 @@ for i in range(0, len(results["text"])):
 PALSTAW=1134
 PALSTAH=1620
 
+print("kylat",list(map(lambda s: results["text"][s], kylat)))
 if len(kylat)==4:
     y1=results["top"][kylat[0]]
     x1=results["left"][kylat[0]]
@@ -375,6 +381,7 @@ for i in range(0, len(results["text"])):
 		    topleft=i
 		pituus+=len(text)
 
+print(list(map(lambda s: results["text"][s], sukunimet)))
 samat=poistaErilaiset(list(map(lambda s: results["text"][s], sukunimet)))
 print(samat)
 
@@ -405,12 +412,14 @@ for i in sukunimet:
 		# display the confidence and text to our terminal
 		print("Confidence: {}".format(conf))
 		print("x: {}".format(x))
+		print("h: {}".format(h))
 		print("Text: {}".format(text))
 		print("")
 		paasukunumet.append(i)
 
 assert(len(paasukunumet)==4)
 paasukunumet.append(len(results["text"])-1)
+assert ero(samat[0], samat[3])<5, "Sukunimet liian kaukana toisistaan"
 print(paasukunumet)
 
 
@@ -471,63 +480,65 @@ for a in range(0,4):
 		        if(len(rivi)>0):
 		            print(lasty, rivi)
 
-		            if(lasty<365 and "asukas1" not in perhe):
-		                if(abs(lasty-48)<4):
-		                    if(rivi[0] in kylanimet):
-		                        perhe["kyla"]=" ".join(rivi)
-		                    else:
-		                        perhe["tontti"]=" ".join(rivi)
-		                if(abs(lasty-82)<5):
-		                    if(rivi[0] in kylanimet):
-		                        if("kyla" in perhe):
-		                            perhe["tontti"]=perhe["kyla"]
-		                        perhe["kyla"]=" ".join(rivi)
-		                if(rivi[0] == "Pinta-ala:"):
-		                    perhe["pinta-ala"]=rivi
-		                if(rivi[0] == "Rakennusmateriaali:"):
-		                    perhe["rakennusmateriaali"]=rivi
-		                if(rivi[0] == "Rakennusvuosi:"):
-		                    perhe["rakennusvuosi"]=rivi
-		                if(rivi[0] == "Laajennus"):
-		                    perhe["laajennus/remontti"]=rivi
-                
-		            if lasty>920 and "lapset" not in perhe and "kuvaus" not in perhe:
-		                if(rivi[0] == "avioliitto" or rivi[0] == "avoliitto"):
-		                    perhe["liitto"]=rivi
-		                else:
-		                    if('s.' in rivi or perhe["sukunimi"] in rivi):
-		                        if "asukas1" not in perhe:
-		                            perhe["asukas1"]=rivi
-		                            assert(lasty>920)
+		            if(len(rivi)<1600):
+
+		                if(lasty<365 and "asukas1" not in perhe):
+		                    if(abs(lasty-48)<4):
+		                        if(rivi[0] in kylanimet):
+		                            perhe["kyla"]=" ".join(rivi)
 		                        else:
-		                            perhe["asukas2"]=rivi
-		                            assert(lasty>920)
+		                            perhe["tontti"]=" ".join(rivi)
+		                    if(abs(lasty-82)<5):
+		                        if(rivi[0] in kylanimet):
+		                            if("kyla" in perhe):
+		                                perhe["tontti"]=perhe["kyla"]
+		                            perhe["kyla"]=" ".join(rivi)
+		                    if(rivi[0] == "Pinta-ala:"):
+		                        perhe["pinta-ala"]=rivi
+		                    if(rivi[0] == "Rakennusmateriaali:"):
+		                        perhe["rakennusmateriaali"]=rivi
+		                    if(rivi[0] == "Rakennusvuosi:"):
+		                        perhe["rakennusvuosi"]=rivi
+		                    if(rivi[0] == "Laajennus"):
+		                        perhe["laajennus/remontti"]=rivi
+                    
+		                if lasty>920 and "lapset" not in perhe and "kuvaus" not in perhe:
+		                    if(rivi[0] == "avioliitto" or rivi[0] == "avoliitto"):
+		                        perhe["liitto"]=rivi
 		                    else:
-		                        if "asukas1" in perhe and "ammatti1" not in perhe and "asukas2" not in perhe:
-		                            if(rivi[-1].endswith(ammatit)):
-		                                perhe["ammatti1"]=rivi
+		                        if('s.' in rivi or perhe["sukunimi"] in rivi):
+		                            if "asukas1" not in perhe:
+		                                perhe["asukas1"]=rivi
 		                                assert(lasty>920)
 		                            else:
-		                                print("!!!!!!!!!!!!!!!!!!")
-		                        if "asukas2" in perhe and "ammatti2" not in perhe:
-		                            if(rivi[-1].endswith(ammatit)):
-		                                perhe["ammatti2"]=rivi
+		                                perhe["asukas2"]=rivi
 		                                assert(lasty>920)
-		                            else:
-		                                print("!!!!!!!!!!!!!!!!!!")
+		                        else:
+		                            if "asukas1" in perhe and "ammatti1" not in perhe and "asukas2" not in perhe:
+		                                if(rivi[-1].endswith(ammatit)):
+		                                    perhe["ammatti1"]=rivi
+		                                    assert(lasty>920)
+		                                else:
+		                                    print("!!!!!!!!!!!!!!!!!!")
+		                            if "asukas2" in perhe and "ammatti2" not in perhe:
+		                                if(rivi[-1].endswith(ammatit)):
+		                                    perhe["ammatti2"]=rivi
+		                                    assert(lasty>920)
+		                                else:
+		                                    print("!!!!!!!!!!!!!!!!!!")
 
-		            if(lasty>985 and "asukas1" in perhe and "kuvaus" not in perhe):
-		                if(rivi[0] == "Lapset:"):
-		                    perhe["lapset"]=rivi
-		                else: 
-		                    if "lapset" in perhe and lasty-lastlasty<=50:
-		                        perhe["lapset"]+=rivi
+		                if(lasty>985 and "asukas1" in perhe and "kuvaus" not in perhe):
+		                    if(rivi[0] == "Lapset:"):
+		                        perhe["lapset"]=rivi
+		                    else: 
+		                        if "lapset" in perhe and lasty-lastlasty<=50:
+		                            perhe["lapset"]+=rivi
 
-		            if(lasty>985 and "asukas1" in perhe and rivi[0] != "Lapset:"):
-		                if(rivi[0] != "Lapset:" and lasty-lastlasty>50 and "kuvaus" not in perhe):
-		                    perhe["kuvaus"]=rivi
-		                elif "kuvaus" in perhe:
-		                    perhe["kuvaus"]+=rivi
+		                if(lasty>985 and "asukas1" in perhe and rivi[0] != "Lapset:"):
+		                    if(rivi[0] != "Lapset:" and lasty-lastlasty>50 and "kuvaus" not in perhe):
+		                        perhe["kuvaus"]=rivi
+		                    elif "kuvaus" in perhe:
+		                        perhe["kuvaus"]+=rivi
 
 
 		        rivi=[]
