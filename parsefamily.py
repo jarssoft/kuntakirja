@@ -274,19 +274,17 @@ kylanimet=["Kirkonkylä", "Kuivalahti", "Verkkokari", "Irjanne", "Lapijoki", "Ka
         "Riiko", "Linnamaa", "Saari", "Sydänmaa", "Orjasaari", "Vuojoki", "Huhta", "Köykkä", \
         "Pappila", "Vaimala"]
     
-ammatit=["eläkeläinen", "koneenkuljettaja", "varastomies", "varastonhoitaja", "maanviljelijä", \
-        "käytönhoitaja", "tradenomi", "siistijä", "kanslisti", "johtaja", "parturi-kampaaja", "hitsaaja",\
-        "kartanpiirtäjä", "merimies", "pituusleikkurinhoitaja", "laitoshuoltaja", "yhteyspäällikkö", \
-        "palveluneuvoja", "yrittäjä", "baariapulainen", "myyjä", "leipomotyöntekijä", "merkantti", \
-        "projekti-insinööri", "laborantti", "matematiikanopettaja", "käsityönopettaja", "puuseppä", \
-        "elektroniikkatyöntekijä", "operaattori" ,"perushoitaja", "emäntä", "katsastusinsinööri", \
-        "apulaiskansiisti", "pankkitoimihenkilö", "puutarhayrittäjä", "paperityöntekijä", "kotiäiti", \
-        "hoitaja", "insinööri", "sairaanhoitaja", "kauppapuutarhuri", "sairaala-apulainen", "maatalousyrittäjä",\
-        "muusikko", "asiakaspalveluhenkilö", "muurari", "työsuunnittelija", "autonasentaja", "kassamyyjä", \
-        "kirjanpitäjä", "autonkuljettaja", "pitokokki", "kuljetusyrittäjä", "muovityöntekijä",\
-        "asfalttilevittäjänkuljettaja", "sihteeri", "maalari", "siivooja", "ATK-suunnittelija", \
-        "satamatyönjohtaja", "tutkimusteknikko", "ylioppilas", "instrumenttiasentaja", "palkanlaskija", \
-        "tutkimusinsinööri", "tuotantoinsinööri", "koneahtaaja"]
+ammatit=("eläkeläinen", "varastomies", "varastonhoitaja", "maanviljelijä", "painaja", \
+        "käytönhoitaja", "tradenomi", "siistijä", "parturi-kampaaja", "hitsaaja", "ahtaaja", \
+        "kartanpiirtäjä", "merimies", "pituusleikkurinhoitaja", "huoltaja", "päällikkö", \
+        "palveluneuvoja", "merkantti", "laborantti", "opettaja", "seppä", "asentaja", "ahtaaja", \
+        "operaattori", "emäntä", "kanslisti", "toimihenkilö", "kotiäiti", "lehtori" , "painaja", \
+        "insinööri", "hoitaja", "puutarhuri", "apulainen", "muusikko", "asiakaspalveluhenkilö", \
+        "muurari", "suunnittelija", "asentaja", "myyjä", "kirjanpitäjä", "kokki", "yrittäjä", \
+        "työntekijä", "kuljettaja", "sihteeri", "maalari", "siivooja", "suunnittelija", "insinööri", \
+        "johtaja", "teknikko", "ylioppilas", "palkanlaskija", "tarkastaja", "kokooja", "päällystäjä", \
+        "kirvesmies"
+        )
 
 assert(ero("Jari", "Ilona") == 255+11)
 assert(ero("Saari", "Salonen") == 0)
@@ -497,13 +495,13 @@ for a in range(0,4):
 		                            assert(lasty>920)
 		                    else:
 		                        if "asukas1" in perhe and "ammatti1" not in perhe and "asukas2" not in perhe:
-		                            if(rivi[-1] in ammatit):
+		                            if(rivi[-1].endswith(ammatit)):
 		                                perhe["ammatti1"]=rivi
 		                                assert(lasty>920)
 		                            else:
 		                                print("!!!!!!!!!!!!!!!!!!")
 		                        if "asukas2" in perhe and "ammatti2" not in perhe:
-		                            if(rivi[-1] in ammatit):
+		                            if(rivi[-1].endswith(ammatit)):
 		                                perhe["ammatti2"]=rivi
 		                                assert(lasty>920)
 		                            else:
