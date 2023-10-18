@@ -105,6 +105,8 @@ print(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1995']))
 print(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1974,', '1990-91']))
 print(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1952,', '1993']))
 
+valmiitsukunimet = ("nen", 'ola', 'ala', "salmi", "ola", "mäki", "ila")
+
 def viimeisteleAsukas(lause, ammattilause, psukunimi):   
     lause=poistaPilkut(lause)
     mode=0
@@ -114,7 +116,7 @@ def viimeisteleAsukas(lause, ammattilause, psukunimi):
     syntymaaika=None
     syntymapaikka=[]
     for s in lause:
-        if s in [psukunimi, "Himanen", 'Alhonmäki-Aalonen', 'Vähä-Jusola', 'Ojala', "Elonen","Kellosalmi"]:
+        if mode==0 and (s == psukunimi or s.endswith(valmiitsukunimet)):
             assert(mode<1)
             mode=1
             sukunimi=s
@@ -205,7 +207,7 @@ def viimeisteleLapset(lause):
                 kaksoset.append(copy.deepcopy(uusilapsi))
                 uusilapsi["etunimet"]=[]
         else:
-            if(s[0].isupper()) and s[-1]!=":":
+            if(s[0].isupper()) and len(s)>1 and s[-1]!=":":
                 if(s[-1]==","):
                     uusilapsi["etunimet"].append(s[0:-1])
                     lapset.append(copy.deepcopy(uusilapsi))
@@ -272,7 +274,7 @@ kylat=[]
 topleft=-1
 kylanimet=["Kirkonkylä", "Kuivalahti", "Verkkokari", "Irjanne", "Lapijoki", "Kainu", "Uusi", \
         "Riiko", "Linnamaa", "Saari", "Sydänmaa", "Orjasaari", "Vuojoki", "Huhta", "Köykkä", \
-        "Pappila", "Vaimala"]
+        "Pappila", "Vaimala", "Hankkila"]
     
 ammatit=("eläkeläinen", "varastomies", "varastonhoitaja", "maanviljelijä", "painaja", \
         "käytönhoitaja", "tradenomi", "siistijä", "parturi-kampaaja", "hitsaaja", "ahtaaja", \
@@ -283,7 +285,10 @@ ammatit=("eläkeläinen", "varastomies", "varastonhoitaja", "maanviljelijä", "p
         "muurari", "suunnittelija", "asentaja", "myyjä", "kirjanpitäjä", "kokki", "yrittäjä", \
         "työntekijä", "kuljettaja", "sihteeri", "maalari", "siivooja", "suunnittelija", "insinööri", \
         "johtaja", "teknikko", "ylioppilas", "palkanlaskija", "tarkastaja", "kokooja", "päällystäjä", \
-        "kirvesmies"
+        "kirvesmies", "verhooja", "kotirouva", "keittäjä", "kalastaja", "laatoittaja", "ompelija", \
+        "koulunkäyntiavustaja", "sähkömestari", "opiskelija", "autoilija", "virkailija", "lomittaja", \
+        "palomies", "talonmies", "kiinteistöhuoltomies", "kirjaltaja", "lääke-esittelijä", "rakennusmies", \
+        "käynnissäpitäjä", "työläinen", "rehtori", "stuertti", "tuotekehitysassistentti"
         )
 
 assert(ero("Jari", "Ilona") == 255+11)
@@ -419,24 +424,28 @@ for a in range(0,4):
     yoffset = results["top"][paasukunumet[0+a]]
     lasty=-1
     
-    for i in range(paasukunumet[a], paasukunumet[a+1]):
+    for i in range(paasukunumet[a], paasukunumet[a+1]+2):
 
-	    # extract the bounding box coordinates of the text region from
-	    # the current result
-	    x = results["left"][i]
-	    y = results["top"][i] - yoffset
-	    w = results["width"][i]
-	    h = results["height"][i]
+	    if i<=paasukunumet[a+1]:
+	        # extract the bounding box coordinates of the text region from
+	        # the current result
+	        x = results["left"][i]
+	        y = results["top"][i] - yoffset
+	        w = results["width"][i]
+	        h = results["height"][i]
 
-	    b = results["block_num"][i]
-	    p = results["par_num"][i]
-	    l = results["line_num"][i]
-	    w = results["word_num"][i]
+	        b = results["block_num"][i]
+	        p = results["par_num"][i]
+	        l = results["line_num"][i]
+	        w = results["word_num"][i]
 
-	    # extract the OCR text itself along with the confidence of the
-	    # text localization
-	    text = results["text"][i]
-	    conf = int(results["conf"][i])
+	        # extract the OCR text itself along with the confidence of the
+	        # text localization
+	        text = results["text"][i]
+	        conf = int(results["conf"][i])
+
+	    if(i>=paasukunumet[a+1]):
+	        text=""
 
         # filter out weak confidence text localizations
 	    if conf > args["min_conf"]:
@@ -531,6 +540,7 @@ for a in range(0,4):
 
     print()
     printdict(perhe)
+    assert("asukas1" in perhe)
 
 
     if("pinta-ala" in perhe):
@@ -574,7 +584,9 @@ for a in range(0,4):
     if("lapset" in perhe):
         perhe["lapset"] = viimeisteleLapset(perhe["lapset"])
 
-    perhe["rakennusmateriaali"]=list(viimeisteleMateriaali(perhe["rakennusmateriaali"]))
+    if("rakennusmateriaali" in perhe):
+        perhe["rakennusmateriaali"]=list(viimeisteleMateriaali(perhe["rakennusmateriaali"]))
+
     if("kuvaus" in perhe):
         perhe["kuvaus"]="".join(poistaTavuviivat(perhe["kuvaus"]))
 
