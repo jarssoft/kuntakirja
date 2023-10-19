@@ -7,6 +7,7 @@ import cv2
 import copy
 import pickle
 import os.path
+import sys
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -16,6 +17,12 @@ ap.add_argument("-c", "--min-conf", type=int, default=0,
 	help="mininum confidence value to filter weak text detection")
 ap.add_argument("-r", "--refresh",
 	help="mininum confidence value to filter weak text detection")
+ap.add_argument("-v", "--verbose",
+	help="")
+
+def eprint(*args, **kwargs):
+    #print(*args, file=sys.stderr, **kwargs)
+    pass
 
 args = vars(ap.parse_args())
 
@@ -27,7 +34,7 @@ if not os.path.isfile(ocrcachefile) or args["refresh"]:
     image = cv2.imread("images/"+args["image"])
     rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     results = pytesseract.image_to_data(rgb, output_type=Output.DICT, lang='fin')
-    print(results)
+    eprint(results)
 
     with open(ocrcachefile, "wb") as fp:   #Pickling
         pickle.dump(results, fp)
@@ -42,19 +49,19 @@ def poistaTavuviivat(lause):
 def poistaPilkut(lause):
     return list(map(lambda a : (a if (a=="" or a[-1]!=',') else a[0:-1]) , lause))
 
-print(poistaTavuviivat(["Tämä","on","koe-","kutsu."]))
-print(poistaTavuviivat(["Tämä","on","kutsu", "kokeilemista", "varten."]))
-print(poistaTavuviivat(["Tämä","on","-"]))
-print(poistaTavuviivat(["-"]))
-print(poistaTavuviivat([]))
+eprint(poistaTavuviivat(["Tämä","on","koe-","kutsu."]))
+eprint(poistaTavuviivat(["Tämä","on","kutsu", "kokeilemista", "varten."]))
+eprint(poistaTavuviivat(["Tämä","on","-"]))
+eprint(poistaTavuviivat(["-"]))
+eprint(poistaTavuviivat([]))
 
 def viimeisteleMateriaali(lause):
     lause=poistaPilkut(lause)
     return list(filter(lambda a : a in ["hirsi", "lauta", "puu", "tiili"], lause))
 
-print(viimeisteleMateriaali(['Rakennusmateriaali:', 'hirsi', 'lauta', 'puu', 'tiili']))
-print(viimeisteleMateriaali(['Rakennusmateriaali:', 'tiili']))
-print(viimeisteleMateriaali(['Rakennusmateriaali:', 'hirsi,', 'lauta']))
+eprint(viimeisteleMateriaali(['Rakennusmateriaali:', 'hirsi', 'lauta', 'puu', 'tiili']))
+eprint(viimeisteleMateriaali(['Rakennusmateriaali:', 'tiili']))
+eprint(viimeisteleMateriaali(['Rakennusmateriaali:', 'hirsi,', 'lauta']))
 
 def viimeistelePintaala(lause):    
     lause=poistaPilkut(lause)
@@ -75,11 +82,11 @@ def viimeistelePintaala(lause):
     if(lause[2] in ["ha"]):
         return pal
 
-print(viimeistelePintaala(['Pinta-ala:', '1,2', 'ha']))
-print(viimeistelePintaala(['Pinta-ala:', '3000', 'm?']))
-print(viimeistelePintaala(['Pinta-ala:', '132', 'ha,', 'josta', 'peltoa', '43', 'ha']))
-print(viimeistelePintaala(['Pinta-ala:', 'n.', '2', 'ha']))
-print(viimeistelePintaala(['Pinta-ala:', 'peltoa', '26', 'ha,', 'metsää', '24', 'ha']))
+eprint(viimeistelePintaala(['Pinta-ala:', '1,2', 'ha']))
+eprint(viimeistelePintaala(['Pinta-ala:', '3000', 'm?']))
+eprint(viimeistelePintaala(['Pinta-ala:', '132', 'ha,', 'josta', 'peltoa', '43', 'ha']))
+eprint(viimeistelePintaala(['Pinta-ala:', 'n.', '2', 'ha']))
+eprint(viimeistelePintaala(['Pinta-ala:', 'peltoa', '26', 'ha,', 'metsää', '24', 'ha']))
 
 
 def viimeisteleRakennusvuosi(lause):    
@@ -92,8 +99,8 @@ def viimeisteleRakennusvuosi(lause):
     except ValueError:
         return None
 
-print(viimeisteleRakennusvuosi(['Rakennusvuosi:', '1800-luvun', 'puoliväli']))
-print(viimeisteleRakennusvuosi(['Rakennusvuosi:', '1986']))
+eprint(viimeisteleRakennusvuosi(['Rakennusvuosi:', '1800-luvun', 'puoliväli']))
+eprint(viimeisteleRakennusvuosi(['Rakennusvuosi:', '1986']))
 
 
 
@@ -104,9 +111,9 @@ def viimeisteleLaajennusTaiRemontti(lause):
         return None
 
 
-print(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1995']))
-print(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1974,', '1990-91']))
-print(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1952,', '1993']))
+eprint(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1995']))
+eprint(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1974,', '1990-91']))
+eprint(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1952,', '1993']))
 
 valmiitsukunimet = ("nen", 'ola', 'ala', "salmi", "ola", "mäki", "ila")
 
@@ -161,31 +168,31 @@ def viimeisteleAsukas(lause, ammattilause, psukunimi):
     asukas["ammatit"]=poistaPilkut(ammattilause)
     return asukas
 
-print(viimeisteleAsukas(['Anna-Liisa',  'Anttila', '(0.s.', 'Pääkkö),', 's.', '7.10.1934', 'Nivala'], ['maatalouslomittaja,', 'eläkeläinen'], 'Anttila'))
+eprint(viimeisteleAsukas(['Anna-Liisa',  'Anttila', '(0.s.', 'Pääkkö),', 's.', '7.10.1934', 'Nivala'], ['maatalouslomittaja,', 'eläkeläinen'], 'Anttila'))
 
-print(viimeisteleAsukas(['Jukka', 'Sakari', 'Anttila,', 's.', '12.1.1961', 'Turku'], ['kuljetusyrittäjä'], 'Anttila'))
+eprint(viimeisteleAsukas(['Jukka', 'Sakari', 'Anttila,', 's.', '12.1.1961', 'Turku'], ['kuljetusyrittäjä'], 'Anttila'))
 
-print(viimeisteleAsukas(['Aki', 'Aikala,', 's.', '11.4.1960', 'Kurikka'], ['puuseppä'], 'Aikala'))
+eprint(viimeisteleAsukas(['Aki', 'Aikala,', 's.', '11.4.1960', 'Kurikka'], ['puuseppä'], 'Aikala'))
 
-print(viimeisteleAsukas(['Pasi', 'Markus', 'Aho,', 's.', '21.1.1974', 'Eurajoki'], ['maanviljelijä,', 'käytönhoitaja'], 'Aho'))
+eprint(viimeisteleAsukas(['Pasi', 'Markus', 'Aho,', 's.', '21.1.1974', 'Eurajoki'], ['maanviljelijä,', 'käytönhoitaja'], 'Aho'))
 
-print(viimeisteleAsukas(['Tiina', '(o.s.', 'Nieminen),', 's.', '11.3.1965', 'Eurajoki'], ['varastonhoitaja'], 'Anttila'))
+eprint(viimeisteleAsukas(['Tiina', '(o.s.', 'Nieminen),', 's.', '11.3.1965', 'Eurajoki'], ['varastonhoitaja'], 'Anttila'))
 
-print(viimeisteleAsukas(['Aino', 'Helena', '(o.s.', 'Lehtinen),', 's.', '5.3.1932', 'Keuruu'], ['siivooja'], 'Arasmo'))
+eprint(viimeisteleAsukas(['Aino', 'Helena', '(o.s.', 'Lehtinen),', 's.', '5.3.1932', 'Keuruu'], ['siivooja'], 'Arasmo'))
 
-print(viimeisteleAsukas(['Eeva', 'Esteri', 'Ahlman', '(o.s.', 'Valo),', 's.', '24.12.1922', 'Eurajoki'], ['eläkeläinen'], "Ahlman"))
+eprint(viimeisteleAsukas(['Eeva', 'Esteri', 'Ahlman', '(o.s.', 'Valo),', 's.', '24.12.1922', 'Eurajoki'], ['eläkeläinen'], "Ahlman"))
 
-print(viimeisteleAsukas(['Aku', 'Franz', 'Aro,', 's.', '4.6.1940', 'Eurajoki'], ['maanviljelijä,', 'eläkeläinen'], 'Aro'))
+eprint(viimeisteleAsukas(['Aku', 'Franz', 'Aro,', 's.', '4.6.1940', 'Eurajoki'], ['maanviljelijä,', 'eläkeläinen'], 'Aro'))
 
-print(viimeisteleAsukas(['Marjatta', 'Ala-Kohtamäki', '(o.s.', 'Karppinen),', 's.', 'Eurajoki'], ['yrittäjä'], 'Ala-Kohtamäki'))
+eprint(viimeisteleAsukas(['Marjatta', 'Ala-Kohtamäki', '(o.s.', 'Karppinen),', 's.', 'Eurajoki'], ['yrittäjä'], 'Ala-Kohtamäki'))
 
-print(viimeisteleAsukas(['Seija', 'Hilma', 'Eufrosyne', '(o.s.', 'Kaukkila),', 's.', '30.12.1941'], [], "Aromaa"))
+eprint(viimeisteleAsukas(['Seija', 'Hilma', 'Eufrosyne', '(o.s.', 'Kaukkila),', 's.', '30.12.1941'], [], "Aromaa"))
 
-print(viimeisteleAsukas(['Kaisa', 'Helena', 'Himanen,', 's.', '11.8.1952', 'Sauvo'], ['sihteeri'], "Aro-Heinilä"))
+eprint(viimeisteleAsukas(['Kaisa', 'Helena', 'Himanen,', 's.', '11.8.1952', 'Sauvo'], ['sihteeri'], "Aro-Heinilä"))
 
-print(viimeisteleAsukas(['Matti', 'Juha,', 's.', '28.12.1959', 'Lappi', 'TI'], ['maanviljelijä'], "Arvela"))
+eprint(viimeisteleAsukas(['Matti', 'Juha,', 's.', '28.12.1959', 'Lappi', 'TI'], ['maanviljelijä'], "Arvela"))
 
-#print(viimeisteleAsukas())
+#eprint(viimeisteleAsukas())
 
 
 
@@ -223,22 +230,22 @@ def viimeisteleLapset(lause):
         lapset.append(copy.deepcopy(uusilapsi))
     return lapset
 
-print(viimeisteleLapset(['Lapset:', 'Tommi', 'Tapani', '1980,', 'Laura-Kaisa', '1983,', 'Teemu', 'Juhani', '1990,']))
+eprint(viimeisteleLapset(['Lapset:', 'Tommi', 'Tapani', '1980,', 'Laura-Kaisa', '1983,', 'Teemu', 'Juhani', '1990,']))
 
-print(viimeisteleLapset(['Lapset:', 'Tarja', '1961,', 'Kirsi', '1963,', 'Heli', '1967,', 'Merja', '1970,', 'Pasi', '1974']))
+eprint(viimeisteleLapset(['Lapset:', 'Tarja', '1961,', 'Kirsi', '1963,', 'Heli', '1967,', 'Merja', '1970,', 'Pasi', '1974']))
 
-print(viimeisteleLapset(['Lapset:', 'Outin:', 'Sanna', '1981', 'sairaanhoitajaopiskelija,', 'Aleksi', '1982', 'mate-', 'matiikanopettajaopiskelija,', 'Ilmari', '1989']))
+eprint(viimeisteleLapset(['Lapset:', 'Outin:', 'Sanna', '1981', 'sairaanhoitajaopiskelija,', 'Aleksi', '1982', 'mate-', 'matiikanopettajaopiskelija,', 'Ilmari', '1989']))
 
-print(viimeisteleLapset(['Lapset:', 'Leena', 'Mirjami', '1957,', 'Jaana', 'Kristiina', 'ja', 'Jukka', 'Sakari', '1961,', 'Jarmo', 'Kalevi', '1963,', 'Elina', 'Anna-Liisa', '1966,', 'Tuula', 'Katriina', '1970']))
+eprint(viimeisteleLapset(['Lapset:', 'Leena', 'Mirjami', '1957,', 'Jaana', 'Kristiina', 'ja', 'Jukka', 'Sakari', '1961,', 'Jarmo', 'Kalevi', '1963,', 'Elina', 'Anna-Liisa', '1966,', 'Tuula', 'Katriina', '1970']))
 
-print(viimeisteleLapset(['Lapset:', 'Kari', 'Olavi', '1954,', 'Ari', 'Tapio', '1956', '(k.', '1959),', 'Outi', 'Helena', '1961', '(k.']))
+eprint(viimeisteleLapset(['Lapset:', 'Kari', 'Olavi', '1954,', 'Ari', 'Tapio', '1956', '(k.', '1959),', 'Outi', 'Helena', '1961', '(k.']))
 
-print(viimeisteleLapset(['Lapset:', 'Janica', '1988,', 'Susanne', '1989,', 'Jonathan', 'ja', 'Robin', '1992']))
+eprint(viimeisteleLapset(['Lapset:', 'Janica', '1988,', 'Susanne', '1989,', 'Jonathan', 'ja', 'Robin', '1992']))
 
-print(viimeisteleLapset(['Lapset:', 'Kirsi,', 'Riia']))
+eprint(viimeisteleLapset(['Lapset:', 'Kirsi,', 'Riia']))
 
 
-#print(viimeisteleLapset())
+#eprint(viimeisteleLapset())
 
 def viimeisteleLiitto(lause):    
     assert(len(lause)>=1)
@@ -247,9 +254,9 @@ def viimeisteleLiitto(lause):
         liitto["alkaen"]=int(lause[1])
     return liitto
 
-print(viimeisteleLiitto(['avioliitto', '2002']))
-print(viimeisteleLiitto(['avoliitto']))
-print(viimeisteleLiitto(['avoliitto', '1993']))
+eprint(viimeisteleLiitto(['avioliitto', '2002']))
+eprint(viimeisteleLiitto(['avoliitto']))
+eprint(viimeisteleLiitto(['avoliitto', '1993']))
 
 #exit(0) ######################################################################
 
@@ -265,9 +272,9 @@ print(viimeisteleLiitto(['avoliitto', '1993']))
 
 # loop over each of the individual text localizations
 
-def printdict(cars):
+def eprintdict(cars):
     for value in cars:
-        print (value,':',cars[value])
+        eprint (value,':',cars[value])
 
 def ero(nimi, vnimi):
     return abs(ord(nimi[0])-ord(vnimi[0]))*255 + abs(ord(nimi[1])-ord(vnimi[1]))
@@ -324,7 +331,7 @@ for i in range(0, len(results["text"])):
 PALSTAW=1134
 PALSTAH=1620
 
-print("kylat",list(map(lambda s: results["text"][s], kylat)))
+eprint("kylat",list(map(lambda s: results["text"][s].capitalize(), kylat)))
 if len(kylat)==4:
     y1=results["top"][kylat[0]]
     x1=results["left"][kylat[0]]
@@ -333,9 +340,9 @@ if len(kylat)==4:
     kallistus=(x2-x1)/PALSTAH
     palstax=x1-kallistus*y1
 
-    print("Kallistus: {}".format(kallistus))
-    print("PalstaX1: {}".format(palstax))
-    print("PalstaX2: {}".format(palstax+PALSTAW))
+    eprint("Kallistus: {}".format(kallistus))
+    eprint("PalstaX1: {}".format(palstax))
+    eprint("PalstaX2: {}".format(palstax+PALSTAW))
 
 
 pituus=0
@@ -360,20 +367,20 @@ for i in range(0, len(results["text"])):
 	korkeusy = results["top"][kylat[0]]-y
 
     # filter out weak confidence text localizations
-	if conf > args["min_conf"] and ((h > 36 and h < 50) or abs(korkeusy-82)<5) and w == 1 and len(text)>1:
+	if conf > args["min_conf"] and ((h > 36 and h < 50) or abs(korkeusy-82)<5) and w == 1 and len(text)>1 and text!="Lapset:":
 		# display the confidence and text to our terminal
-		print("Confidence: {}".format(conf))
-		print("x: {}".format(x))
-		print("y: {}".format(y))
-		print("h: {}".format(h))
+		eprint("Confidence: {}".format(conf))
+		eprint("x: {}".format(x))
+		eprint("y: {}".format(y))
+		eprint("h: {}".format(h))
 
-		print("b: {}".format(b))
-		print("p: {}".format(p))
-		print("l: {}".format(l))
-		print("w: {}".format(w))
+		eprint("b: {}".format(b))
+		eprint("p: {}".format(p))
+		eprint("l: {}".format(l))
+		eprint("w: {}".format(w))
 
-		print("Text: {}".format(text))
-		print("")
+		eprint("Text: {}".format(text))
+		eprint("")
 
 
 		sukunimet.append(i)
@@ -381,9 +388,9 @@ for i in range(0, len(results["text"])):
 		    topleft=i
 		pituus+=len(text)
 
-print(list(map(lambda s: results["text"][s], sukunimet)))
-samat=poistaErilaiset(list(map(lambda s: results["text"][s], sukunimet)))
-print(samat)
+eprint(list(map(lambda s: results["text"][s].capitalize(), sukunimet)))
+samat=poistaErilaiset(list(map(lambda s: results["text"][s].capitalize(), sukunimet)))
+eprint(samat)
 
 paasukunumet=[]
 
@@ -410,23 +417,23 @@ for i in sukunimet:
     # filter out weak confidence text localizations
 	if text in samat:
 		# display the confidence and text to our terminal
-		print("Confidence: {}".format(conf))
-		print("x: {}".format(x))
-		print("h: {}".format(h))
-		print("Text: {}".format(text))
-		print("")
+		eprint("Confidence: {}".format(conf))
+		eprint("x: {}".format(x))
+		eprint("h: {}".format(h))
+		eprint("Text: {}".format(text))
+		eprint("")
 		paasukunumet.append(i)
 
 assert(len(paasukunumet)==4)
 paasukunumet.append(len(results["text"])-1)
 assert ero(samat[0], samat[3])<5*255, "Sukunimet liian kaukana toisistaan"
-print(paasukunumet)
+eprint(paasukunumet)
 
 
 
 lasty=0
 for a in range(0,4):
-    print("\n-------------------")
+    eprint("\n-------------------")
 
     rivi=[]
     perhe = dict(sukunimi = results["text"][paasukunumet[0+a]])
@@ -459,26 +466,26 @@ for a in range(0,4):
         # filter out weak confidence text localizations
 	    if conf > args["min_conf"]:
 		    # display the confidence and text to our terminal
-		    #print("Confidence: {}".format(conf))
-		    #print("x: {}".format(x))
-		    #print("y: {}".format(y))
-		    #print("h: {}".format(h))
-		    #print("Text: {}".format(text))
-		    #print("x: {}".format(x))
-		    #print("y: {}".format(y))
-		    #print("h: {}".format(h))
+		    #eprint("Confidence: {}".format(conf))
+		    #eprint("x: {}".format(x))
+		    #eprint("y: {}".format(y))
+		    #eprint("h: {}".format(h))
+		    #eprint("Text: {}".format(text))
+		    #eprint("x: {}".format(x))
+		    #eprint("y: {}".format(y))
+		    #eprint("h: {}".format(h))
 
-		    #print("b: {}".format(b))
-		    #print("p: {}".format(p))
-		    #print("l: {}".format(l))
-		    #print("w: {}".format(w))
+		    #eprint("b: {}".format(b))
+		    #eprint("p: {}".format(p))
+		    #eprint("l: {}".format(l))
+		    #eprint("w: {}".format(w))
 
-		    #print ('\n' if w==1 else '', end='')
-		    #print("{} ".format(text), end='')
+		    #eprint ('\n' if w==1 else '', end='')
+		    #eprint("{} ".format(text), end='')
 
 		    if w==1:
 		        if(len(rivi)>0):
-		            print(lasty, rivi)
+		            eprint(lasty, rivi)
 
 		            if(len(rivi)<1600):
 
@@ -519,13 +526,13 @@ for a in range(0,4):
 		                                    perhe["ammatti1"]=rivi
 		                                    assert(lasty>920)
 		                                else:
-		                                    print("!!!!!!!!!!!!!!!!!!")
+		                                    eprint("!!!!!!!!!!!!!!!!!!")
 		                            if "asukas2" in perhe and "ammatti2" not in perhe:
 		                                if(rivi[-1].endswith(ammatit)):
 		                                    perhe["ammatti2"]=rivi
 		                                    assert(lasty>920)
 		                                else:
-		                                    print("!!!!!!!!!!!!!!!!!!")
+		                                    eprint("!!!!!!!!!!!!!!!!!!")
 
 		                if(lasty>985 and "asukas1" in perhe and "kuvaus" not in perhe):
 		                    if(rivi[0] == "Lapset:"):
@@ -549,8 +556,8 @@ for a in range(0,4):
 		    rivi.append(text)
 		    
 
-    print()
-    printdict(perhe)
+    eprint()
+    eprintdict(perhe)
     assert("asukas1" in perhe)
 
 
@@ -601,8 +608,10 @@ for a in range(0,4):
     if("kuvaus" in perhe):
         perhe["kuvaus"]="".join(poistaTavuviivat(perhe["kuvaus"]))
 
-    print()
-    printdict(perhe)
+    eprint()
+    eprintdict(perhe)
+
+    print(perhe)
 
 exit(0)
 
@@ -614,7 +623,7 @@ if topleft>0:
 
     TOLE=18
 
-    print("-------------------")
+    eprint("-------------------")
 
     # Sukunimet koordinaatin mukaan
 
@@ -630,7 +639,7 @@ if topleft>0:
 	            if(abs(abs(toplefty-y)-PALSTAH) < TOLE):
 	                bottomleft=i
 	                kallistus=(x-topleftx)/PALSTAH
-	                print("Kallistus: {}".format(kallistus))
+	                eprint("Kallistus: {}".format(kallistus))
 	        if kallistus != -1:
 	            if abs(abs(topleftx-x)-PALSTAW)<TOLE \
                     and abs(toplefty-(y+PALSTAW*kallistus))<TOLE:
@@ -643,10 +652,10 @@ if topleft>0:
 
     for i in [topleft, bottomleft, topright, bottomright]:
         text = results["text"][i]
-        print("Text: {}".format(text))
+        eprint("Text: {}".format(text))
 
         # filter out weak confidence text localizations
 	    #if conf > args["min_conf"] and h > 37 and h < 41 and w == 1:
 else:
     sukunimet=poistaErilaiset(sukunimet)
-    print(poistaErilaiset(sukunimet))
+    eprint(poistaErilaiset(sukunimet))
