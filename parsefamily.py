@@ -1,7 +1,6 @@
 import math  
 from pytesseract import Output
 import pytesseract
-import argparse
 import cv2
 import pickle
 import os.path
@@ -19,20 +18,17 @@ from viimeistely import *
 
 # loop over each of the individual text localizations
 
-def parsiResults(results):
+def parsiResults(results, minconf):
 
 	sukunimet=[]
 	kylat=[]
 	topleft=-1
 
-
 	for i in range(0, len(results["text"])):
 		conf = int(results["conf"][i])
 		text = results["text"][i]
-		if conf > args["min_conf"] and text in kylanimet:
+		if conf > minconf and text in kylanimet:
 			kylat.append(i)
-
-
 
 	eprint("kylat",list(map(lambda s: results["text"][s].capitalize(), kylat)))
 	if len(kylat)==4:
@@ -70,7 +66,7 @@ def parsiResults(results):
 		korkeusy = results["top"][kylat[0]]-y
 
 		# filter out weak confidence text localizations
-		if conf > args["min_conf"] and ((h > 36 and h < 50) or abs(korkeusy-82)<5) and w == 1 and len(text)>1 and text!="Lapset:":
+		if conf > minconf and ((h > 36 and h < 50) or abs(korkeusy-82)<5) and w == 1 and len(text)>1 and text!="Lapset:":
 			# display the confidence and text to our terminal
 			eprint("Confidence: {}".format(conf))
 			eprint("x: {}".format(x))
@@ -84,7 +80,6 @@ def parsiResults(results):
 
 			eprint("Text: {}".format(text))
 			eprint("")
-
 
 			sukunimet.append(i)
 			if(pituus==0):
@@ -168,7 +163,7 @@ def parsiResults(results):
 				text=""
 
 			# filter out weak confidence text localizations
-			if conf > args["min_conf"]:
+			if conf > minconf:
 				# display the confidence and text to our terminal
 				#eprint("Confidence: {}".format(conf))
 				#eprint("x: {}".format(x))
@@ -251,7 +246,6 @@ def parsiResults(results):
 								elif "kuvaus" in perhe:
 									perhe["kuvaus"]+=rivi
 
-
 					rivi=[]
 					lastlasty=lasty
 					lasty=y
@@ -270,46 +264,27 @@ def parsiResults(results):
 
 	return perheet
 
+def parseFile(imagefile, useCache, minconf):
 
-# construct the argument parser and parse the arguments
-ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--image", required=True,
-	help="path to input image to be OCR'd")
-ap.add_argument("-c", "--min-conf", type=int, default=0,
-	help="mininum confidence value to filter weak text detection")
-ap.add_argument("-r", "--refresh",
-	help="mininum confidence value to filter weak text detection")
-ap.add_argument("-v", "--verbose",
-	help="")
+	ocrcachefile="cache/"+imagefile+".cache"
 
-args = vars(ap.parse_args())
+	if not os.path.isfile(ocrcachefile) or useCache:
+		# load the input image, convert it from BGR to RGB channel ordering,
+		# and use Tesseract to localize each area of text in the input image
+		image = cv2.imread("images/"+imagefile)
+		rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+		results = pytesseract.image_to_data(rgb, output_type=Output.DICT, lang='fin')
+		eprint(results)
 
-ocrcachefile="cache/"+args["image"]+".cache"
+		with open(ocrcachefile, "wb") as fp:   #Pickling
+			pickle.dump(results, fp)
 
-if not os.path.isfile(ocrcachefile) or args["refresh"]:
-	# load the input image, convert it from BGR to RGB channel ordering,
-	# and use Tesseract to localize each area of text in the input image
-	image = cv2.imread("images/"+args["image"])
-	rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-	results = pytesseract.image_to_data(rgb, output_type=Output.DICT, lang='fin')
-	eprint(results)
+	with open(ocrcachefile, "rb") as fp:   # Unpickling
+		results = pickle.load(fp)
 
-	with open(ocrcachefile, "wb") as fp:   #Pickling
-		pickle.dump(results, fp)
+	return parsiResults(results, minconf)
 
-with open(ocrcachefile, "rb") as fp:   # Unpickling
-	results = pickle.load(fp)
-
-perheet = parsiResults(results)
-
-print("-----------------")
-
-for perhe in perheet:
-	print()
-	eprintdict(perhe)
-
-exit(0)
-
+"""
 
 if topleft>0:
 	topleftx = results["left"][topleft]
@@ -354,3 +329,4 @@ if topleft>0:
 else:
 	sukunimet=yleisemmatEnsin(sukunimet)[:4]
 	eprint(yleisemmatEnsin(sukunimet))
+"""

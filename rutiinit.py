@@ -1,8 +1,8 @@
 import sys
 
 def eprint(*args, **kwargs):
-	print(*args, file=sys.stderr, **kwargs)
-	#pass
+	#print(*args, file=sys.stderr, **kwargs)
+	pass
 
 def poistaTavuviivat(lause):
 	return list(map(lambda a : (a+" " if (a=="" or a[-1]!='-') else a[0:-1]) , lause))
@@ -37,6 +37,6 @@ def yleisemmatEnsin(nimet):
 
 def eprintdict(cars):
 	for value in cars:
-		eprint (value,':',cars[value])
+		print (value,':',cars[value])
 		
         
