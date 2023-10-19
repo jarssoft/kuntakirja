@@ -6,7 +6,7 @@ import cv2
 import pickle
 import os.path
 
-from vakiot import ammatit, kylanimet
+from vakiot import ammatit, kylanimet, PALSTAH, PALSTAW
 from rutiinit import *
 from viimeistely import * 
 
@@ -40,15 +40,6 @@ with open(ocrcachefile, "rb") as fp:   # Unpickling
 	results = pickle.load(fp)
 
 
-
-
-eprint(poistaTavuviivat(["Tämä","on","koe-","kutsu."]))
-eprint(poistaTavuviivat(["Tämä","on","kutsu", "kokeilemista", "varten."]))
-eprint(poistaTavuviivat(["Tämä","on","-"]))
-eprint(poistaTavuviivat(["-"]))
-eprint(poistaTavuviivat([]))
-
-
 # 1. blokki
 # ylin,vasemmaisin
 # alapuoliskon ylin, oikeapuoliskon vasemmaisin
@@ -59,30 +50,10 @@ eprint(poistaTavuviivat([]))
 
 # loop over each of the individual text localizations
 
-def eprintdict(cars):
-	for value in cars:
-		eprint (value,':',cars[value])
-
-def ero(nimi, vnimi):
-	return abs(ord(nimi[0])-ord(vnimi[0]))*255 + abs(ord(nimi[1])-ord(vnimi[1]))
 
 sukunimet=[]
 kylat=[]
 topleft=-1
-
-
-
-assert(ero("Jari", "Ilona") == 255+11)
-assert(ero("Saari", "Salonen") == 0)
-
-def etaisyydet(nimet):
-	pal=[]
-	for nimi in nimet:        
-		erot=0        
-		for vnimi in nimet:
-			erot+=ero(nimi, vnimi)
-		pal.append(erot)
-	return pal
 
 # Poistaa nimet jotka ovat muita kauempana aakkosjärjestyksessä
 def poistaErilaiset(nimet):    
@@ -94,8 +65,7 @@ for i in range(0, len(results["text"])):
 	if conf > args["min_conf"] and text in kylanimet:
 		kylat.append(i)
 
-PALSTAW=1134
-PALSTAH=1620
+
 
 eprint("kylat",list(map(lambda s: results["text"][s].capitalize(), kylat)))
 if len(kylat)==4:
@@ -110,8 +80,8 @@ if len(kylat)==4:
 	eprint("PalstaX1: {}".format(palstax))
 	eprint("PalstaX2: {}".format(palstax+PALSTAW))
 
-
 pituus=0
+
 for i in range(0, len(results["text"])):
 	# extract the bounding box coordinates of the text region from
 	# the current result
@@ -322,59 +292,12 @@ for a in range(0,4):
 
 			rivi.append(text)
 			
-
 	eprint()
 	eprintdict(perhe)
 	assert("asukas1" in perhe)
 
-
-	if("pinta-ala" in perhe):
-		perhe["pinta-ala"]=viimeistelePintaala(perhe["pinta-ala"])
-		if(perhe["pinta-ala"]==None):
-			del perhe["pinta-ala"]
-
-	if("rakennusvuosi" in perhe):
-		perhe["rakennusvuosi"]=viimeisteleRakennusvuosi(perhe["rakennusvuosi"])
-		if(perhe["rakennusvuosi"]==None):
-			del perhe["rakennusvuosi"]
-
-	if("laajennus/remontti" in perhe):
-		perhe["laajennus/remontti"]=viimeisteleLaajennusTaiRemontti(perhe["laajennus/remontti"])
-		if(perhe["laajennus/remontti"]==None):
-			del perhe["laajennus/remontti"]
-
-
-	perhe["asukkaat"]=[viimeisteleAsukas(perhe["asukas1"], 
-				perhe["ammatti1"] if "ammatti1" in perhe else [], 
-				perhe["sukunimi"])]
-
-
-	if("asukas2" in perhe):
-		perhe["asukkaat"].append(viimeisteleAsukas(perhe["asukas2"], 
-				perhe["ammatti2"] if "ammatti2" in perhe else [], 
-				perhe["sukunimi"]))
-
-	if "asukas1" in perhe:
-		del perhe["asukas1"]
-	if "asukas2" in perhe:
-		del perhe["asukas2"]
-	if "ammatti1" in perhe:
-		del perhe["ammatti1"]
-	if "ammatti2" in perhe:
-		del perhe["ammatti2"]
-
-	if "liitto" in perhe:
-		perhe["liitto"]=viimeisteleLiitto(perhe["liitto"])
-
-	if("lapset" in perhe):
-		perhe["lapset"] = viimeisteleLapset(perhe["lapset"])
-
-	if("rakennusmateriaali" in perhe):
-		perhe["rakennusmateriaali"]=list(viimeisteleMateriaali(perhe["rakennusmateriaali"]))
-
-	if("kuvaus" in perhe):
-		perhe["kuvaus"]="".join(poistaTavuviivat(perhe["kuvaus"]))
-
+	perhe = viimeistelePerhe(perhe)
+	
 	eprint()
 	eprintdict(perhe)
 

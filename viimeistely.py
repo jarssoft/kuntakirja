@@ -205,3 +205,55 @@ eprint(viimeisteleLiitto(['avoliitto']))
 eprint(viimeisteleLiitto(['avoliitto', '1993']))
 
 #exit(0) ######################################################################
+
+
+def viimeistelePerhe(perhe):
+	
+	if("pinta-ala" in perhe):
+		perhe["pinta-ala"]=viimeistelePintaala(perhe["pinta-ala"])
+		if(perhe["pinta-ala"]==None):
+			del perhe["pinta-ala"]
+
+	if("rakennusvuosi" in perhe):
+		perhe["rakennusvuosi"]=viimeisteleRakennusvuosi(perhe["rakennusvuosi"])
+		if(perhe["rakennusvuosi"]==None):
+			del perhe["rakennusvuosi"]
+
+	if("laajennus/remontti" in perhe):
+		perhe["laajennus/remontti"]=viimeisteleLaajennusTaiRemontti(perhe["laajennus/remontti"])
+		if(perhe["laajennus/remontti"]==None):
+			del perhe["laajennus/remontti"]
+
+
+	perhe["asukkaat"]=[viimeisteleAsukas(perhe["asukas1"], 
+				perhe["ammatti1"] if "ammatti1" in perhe else [], 
+				perhe["sukunimi"])]
+
+
+	if("asukas2" in perhe):
+		perhe["asukkaat"].append(viimeisteleAsukas(perhe["asukas2"], 
+				perhe["ammatti2"] if "ammatti2" in perhe else [], 
+				perhe["sukunimi"]))
+
+	if "asukas1" in perhe:
+		del perhe["asukas1"]
+	if "asukas2" in perhe:
+		del perhe["asukas2"]
+	if "ammatti1" in perhe:
+		del perhe["ammatti1"]
+	if "ammatti2" in perhe:
+		del perhe["ammatti2"]
+
+	if "liitto" in perhe:
+		perhe["liitto"]=viimeisteleLiitto(perhe["liitto"])
+
+	if("lapset" in perhe):
+		perhe["lapset"] = viimeisteleLapset(perhe["lapset"])
+
+	if("rakennusmateriaali" in perhe):
+		perhe["rakennusmateriaali"]=list(viimeisteleMateriaali(perhe["rakennusmateriaali"]))
+
+	if("kuvaus" in perhe):
+		perhe["kuvaus"]="".join(poistaTavuviivat(perhe["kuvaus"]))
+
+	return perhe
