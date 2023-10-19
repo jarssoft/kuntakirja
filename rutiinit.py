@@ -31,6 +31,12 @@ def etaisyydet(nimet):
 		pal.append(erot)
 	return pal
 
+# Järjestää nimet aloittamalla niistä, jotka ovat toisiian lähellä aakkosissa
+def yleisemmatEnsin(nimet):    
+	return [x for _, x in sorted(zip(etaisyydet(nimet), nimet))]
+
 def eprintdict(cars):
 	for value in cars:
 		eprint (value,':',cars[value])
+		
+        
