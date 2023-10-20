@@ -130,17 +130,20 @@ def parsiResults(results, minconf):
 		korkeusy = results["top"][kylat[0]]-y
 
 		# filter out weak confidence text localizations
-		if text in samat:
-			# display the confidence and text to our terminal
-			eprint("Confidence: {}".format(conf))
-			eprint("x: {}".format(x))
-			eprint("h: {}".format(h))
-			eprint("Text: {}".format(text))
-			eprint("")
-			paasukunimet.append(i)
+		if(len(text)>1):
+			if text[0].startswith(('i','l')):
+				text="I"+text[1:]
+			if text in samat:
+				# display the confidence and text to our terminal
+				eprint("Confidence: {}".format(conf))
+				eprint("x: {}".format(x))
+				eprint("h: {}".format(h))
+				eprint("Text: {}".format(text))
+				eprint("")
+				paasukunimet.append(i)
 
 	if(len(paasukunimet)!=4):
-		return ["len(paasukunimet)!=4"]
+		return ["len(paasukunimet)!=4, "+str(list(map(lambda s: results["text"][s], paasukunimet)))+str(samat)]
 	
 	assert(len(paasukunimet)==4)
 	paasukunimet.append(len(results["text"])-1)
