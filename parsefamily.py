@@ -262,6 +262,7 @@ def parsiResults(results, minconf):
 		eprint()
 		eprintdict(perhe)
 
+	perheet[2], perheet[1] = perheet[1], perheet[2]
 	return perheet
 
 def parseFile(imagefile, useCache, minconf):
