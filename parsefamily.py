@@ -123,6 +123,8 @@ def parsiResults(results, minconf):
 			eprint("")
 			paasukunumet.append(i)
 
+	if(len(paasukunumet)!=4):
+		return []
 	assert(len(paasukunumet)==4)
 	paasukunumet.append(len(results["text"])-1)
 	assert ero(samat[0], samat[3])<5*255, "Sukunimet liian kaukana toisistaan"
@@ -254,13 +256,13 @@ def parsiResults(results, minconf):
 				rivi.append(text)
 				
 		eprint()
-		eprintdict(perhe)
+		#eprintdict(perhe)
 		assert("asukas1" in perhe)
 
 		perheet.append(viimeistelePerhe(perhe))
 		
 		eprint()
-		eprintdict(perhe)
+		#eprintdict(perhe)
 
 	perheet[2], perheet[1] = perheet[1], perheet[2]
 	return perheet
