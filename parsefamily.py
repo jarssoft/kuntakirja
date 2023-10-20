@@ -44,6 +44,7 @@ def parsiResults(results, minconf):
 		eprint("PalstaX2: {}".format(palstax+PALSTAW))
 
 	pituus=0
+	samat=[]
 
 	for i in range(0, len(results["text"])):
 		# extract the bounding box coordinates of the text region from
@@ -61,37 +62,52 @@ def parsiResults(results, minconf):
 		# extract the OCR text itself along with the confidence of the
 		# text localization
 		text = results["text"][i]
+		
 		conf = int(results["conf"][i])
 
 		korkeusy = results["top"][kylat[0]]-y
 
 		# filter out weak confidence text localizations
-		if conf > minconf and ((h > 36 and h < 50) or abs(korkeusy-82)<5) and w == 1 and len(text)>1 and text!="Lapset:":
-			# display the confidence and text to our terminal
-			eprint("Confidence: {}".format(conf))
-			eprint("x: {}".format(x))
-			eprint("y: {}".format(y))
-			eprint("h: {}".format(h))
+		if(len(text)>1):
+			if text[0].startswith(('i','l')):
+				text="I"+text[1:]
+			if conf > minconf and ((h > 36 and h < 50) or abs(korkeusy-82)<5) and w == 1 and text!="Lapset:" and text[0].isupper():
+				# display the confidence and text to our terminal
+				eprint("Confidence: {}".format(conf))
+				eprint("x: {}".format(x))
+				eprint("y: {}".format(y))
+				eprint("h: {}".format(h))
 
-			eprint("b: {}".format(b))
-			eprint("p: {}".format(p))
-			eprint("l: {}".format(l))
-			eprint("w: {}".format(w))
+				eprint("b: {}".format(b))
+				eprint("p: {}".format(p))
+				eprint("l: {}".format(l))
+				eprint("w: {}".format(w))
 
-			eprint("Text: {}".format(text))
-			eprint("")
+				eprint("Text: {}".format(text))
+				eprint("")
 
-			sukunimet.append(i)
-			if(pituus==0):
-				topleft=i
-			
-			pituus+=len(text)
+				if(text[0].islower()):
+					return ["nimi "+text+" alkaa pienellä alkukirjaimella."]
 
-	eprint(list(map(lambda s: results["text"][s].capitalize(), sukunimet)))
-	samat=yleisemmatEnsin(list(map(lambda s: results["text"][s].capitalize(), sukunimet)))[:4]
+				sukunimet.append(i)
+				samat.append(text)
+
+				if(pituus==0):
+					topleft=i
+				
+				pituus+=len(text)
+
+	#eprint(list(map(lambda s: results["text"][s], sukunimet)))
+	samat=yleisemmatEnsin(samat)[:4]
 	eprint(samat)
 
-	paasukunumet=[]
+	if(len(samat)!=4):
+		return ["len(samat)!=4 "+str(samat)]
+	
+	if(ero(samat[0], samat[3])>4*255):
+		return ["Sukunimet liian kaukana toisistaan"+str(samat)]
+
+	paasukunimet=[]
 
 	for i in sukunimet:
 		# extract the bounding box coordinates of the text region from
@@ -121,14 +137,15 @@ def parsiResults(results, minconf):
 			eprint("h: {}".format(h))
 			eprint("Text: {}".format(text))
 			eprint("")
-			paasukunumet.append(i)
+			paasukunimet.append(i)
 
-	if(len(paasukunumet)!=4):
-		return []
-	assert(len(paasukunumet)==4)
-	paasukunumet.append(len(results["text"])-1)
+	if(len(paasukunimet)!=4):
+		return ["len(paasukunimet)!=4"]
+	
+	assert(len(paasukunimet)==4)
+	paasukunimet.append(len(results["text"])-1)
 	assert ero(samat[0], samat[3])<5*255, "Sukunimet liian kaukana toisistaan"
-	eprint(paasukunumet)
+	eprint(paasukunimet)
 
 	lasty=0
 	perheet=[]
@@ -137,13 +154,13 @@ def parsiResults(results, minconf):
 		eprint("\n-------------------")
 
 		rivi=[]
-		perhe = dict(sukunimi = results["text"][paasukunumet[0+a]])
-		yoffset = results["top"][paasukunumet[0+a]]
+		perhe = dict(sukunimi = results["text"][paasukunimet[0+a]])
+		yoffset = results["top"][paasukunimet[0+a]]
 		lasty=-1
 		
-		for i in range(paasukunumet[a], paasukunumet[a+1]+2):
+		for i in range(paasukunimet[a], paasukunimet[a+1]+2):
 
-			if i<=paasukunumet[a+1]:
+			if i<=paasukunimet[a+1]:
 				# extract the bounding box coordinates of the text region from
 				# the current result
 				x = results["left"][i]
@@ -161,7 +178,7 @@ def parsiResults(results, minconf):
 				text = results["text"][i]
 				conf = int(results["conf"][i])
 
-			if(i>=paasukunumet[a+1]):
+			if(i>=paasukunimet[a+1]):
 				text=""
 
 			# filter out weak confidence text localizations
@@ -257,6 +274,8 @@ def parsiResults(results, minconf):
 				
 		eprint()
 		#eprintdict(perhe)
+		if(not "asukas1" in perhe):
+			return ["Perheessä pitää olla vähintään yksi asukas."]
 		assert("asukas1" in perhe)
 
 		perheet.append(viimeistelePerhe(perhe))
@@ -288,7 +307,6 @@ def parseFile(imagefile, useCache, minconf):
 	return parsiResults(results, minconf)
 
 """
-
 if topleft>0:
 	topleftx = results["left"][topleft]
 	toplefty = results["top"][topleft]
