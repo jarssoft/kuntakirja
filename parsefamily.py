@@ -7,6 +7,11 @@ import os.path
 
 from vakiot import ammatit, kylanimet, PALSTAH, PALSTAW
 from viimeistely import * 
+import inspect
+
+def errorline():
+    """Returns the current line number in our program."""
+    return "Error in line "+str(inspect.currentframe().f_back.f_lineno)+": "
 
 # 1. blokki
 # ylin,vasemmaisin
@@ -87,7 +92,7 @@ def parsiResults(results, minconf):
 				eprint("")
 
 				if(text[0].islower()):
-					return ["nimi "+text+" alkaa pienellä alkukirjaimella."]
+					return [errorline()+"nimi "+text+" alkaa pienellä alkukirjaimella."]
 
 				sukunimet.append(i)
 				samat.append(text)
@@ -102,10 +107,10 @@ def parsiResults(results, minconf):
 	eprint(samat)
 
 	if(len(samat)!=4):
-		return ["len(samat)!=4 "+str(samat)]
+		return [errorline()+"len(samat)!=4 "+str(samat)]
 	
 	if(ero(samat[0], samat[3])>4*255):
-		return ["Sukunimet liian kaukana toisistaan"+str(samat)]
+		return [errorline()+"Sukunimet liian kaukana toisistaan"+str(samat)]
 
 	paasukunimet=[]
 
@@ -143,7 +148,7 @@ def parsiResults(results, minconf):
 				paasukunimet.append(i)
 
 	if(len(paasukunimet)!=4):
-		return ["len(paasukunimet)!=4, "+str(list(map(lambda s: results["text"][s], paasukunimet)))+str(samat)]
+		return [errorline()+"len(paasukunimet)!=4, "+str(list(map(lambda s: results["text"][s], paasukunimet)))+str(samat)]
 	
 	assert(len(paasukunimet)==4)
 	paasukunimet.append(len(results["text"])-1)
