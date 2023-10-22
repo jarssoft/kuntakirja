@@ -1,5 +1,7 @@
 import copy
 from rutiinit import *
+from functools import reduce
+
 
 def viimeisteleMateriaali(lause):
 	lause=poistaPilkut(lause)
@@ -177,6 +179,17 @@ def viimeisteleLapset(lause):
 						assert(len(uusilapsi["etunimet"])<=3)
 	if(len(uusilapsi["etunimet"])>0):
 		lapset.append(copy.deepcopy(uusilapsi))
+
+	"""
+	entvuosi=1800
+	for lapsi in lapset:
+		vuosi=lapsi["syntynyt"] if "syntynyt" in lapsi else entvuosi
+		#assert(vuosi>=entvuosi)
+		if vuosi<entvuosi:
+			print("Lapset väärässä järjestyksessä.")
+		entvuosi=vuosi
+	"""
+
 	return lapset
 
 eprint(viimeisteleLapset(['Lapset:', 'Tommi', 'Tapani', '1980,', 'Laura-Kaisa', '1983,', 'Teemu', 'Juhani', '1990,']))
@@ -194,6 +207,8 @@ eprint(viimeisteleLapset(['Lapset:', 'Janica', '1988,', 'Susanne', '1989,', 'Jon
 eprint(viimeisteleLapset(['Lapset:', 'Kirsi,', 'Riia']))
 
 eprint(viimeisteleLapset(['Lapset:', 'Roy', 'Krister', 'Mikael', 'Hopiavuori', '1971']))
+
+#eprint(viimeisteleLapset(['Lapset:', 'Janica', '2000,', 'Susanne', '1989,', 'Jonathan', 'ja', 'Robin', '1992']))
 
 
 #eprint(viimeisteleLapset())
