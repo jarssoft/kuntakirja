@@ -35,7 +35,13 @@ def parsiResults(results, minconf):
 		if conf > minconf and text in kylanimet:
 			kylat.append(i)
 
-	eprint("kylat",list(map(lambda s: results["text"][s].capitalize(), kylat)))
+	kylatstr=str(list(map(lambda s: results["text"][s].capitalize(), kylat)))
+
+	if(len(kylat)<3):
+		return [errorline()+"len(kylat)<4, " + kylatstr]
+
+	eprint("kylat", kylatstr)
+
 	if len(kylat)==4:
 		y1=results["top"][kylat[0]]
 		x1=results["left"][kylat[0]]
@@ -76,7 +82,7 @@ def parsiResults(results, minconf):
 		if(len(text)>1):
 			if text[0].startswith(('i','l')):
 				text="I"+text[1:]
-			if conf > minconf and ((h > 36 and h < 50) or abs(korkeusy-82)<5) and w == 1 and text!="Lapset:" and text[0].isupper():
+			if conf > minconf and ((h > 36 and h < 55) or abs(korkeusy-82)<5) and w == 1 and text!="Lapset:" and text[0].isupper():
 				# display the confidence and text to our terminal
 				eprint("Confidence: {}".format(conf))
 				eprint("x: {}".format(x))
@@ -297,13 +303,14 @@ def parsiResults(results, minconf):
 def parseFile(imagefile, useCache, minconf):
 
 	ocrcachefile="cache/"+imagefile+".cache"
+	cfg_filename = 'userwords.txt'
 
 	if not os.path.isfile(ocrcachefile) or useCache:
 		# load the input image, convert it from BGR to RGB channel ordering,
 		# and use Tesseract to localize each area of text in the input image
 		image = cv2.imread("images/"+imagefile)
 		rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-		results = pytesseract.image_to_data(rgb, output_type=Output.DICT, lang='fin')
+		results = pytesseract.image_to_data(rgb, output_type=Output.DICT, lang='fin', config="--user-words userwords.txt")
 		eprint(results)
 
 		with open(ocrcachefile, "wb") as fp:   #Pickling

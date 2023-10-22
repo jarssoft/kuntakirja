@@ -18,7 +18,10 @@ ammatit=("eläkeläinen", "varastomies", "varastonhoitaja", "maanviljelijä", "p
 
 kylanimet=["Kirkonkylä", "Kuivalahti", "Verkkokari", "Irjanne", "Lapijoki", "Kainu", "Uusi", \
 		"Riiko", "Linnamaa", "Saari", "Sydänmaa", "Orjasaari", "Vuojoki", "Huhta", "Köykkä", \
-		"Pappila", "Vaimala", "Hankkila"]
+		"Pappila", "Vaimala", "Hankkila", "Lutta", "Koivuniemi", "Mullila", "Metsola", \
+		"Lavila-Mattila", "Kaivettula", "Auvi", "Ilavainen", "Taipale", "Hakuni", "Pihlaus", \
+        "Kaukomäki", "Väkkärä", "Tarvola", "Mäkelänkulma", "Rikantila", "Lavila", "Raski", "Juva",\
+        "Melaluoto", "Järvikylä", "Kaukonpieli", "Maade"]
 
 PALSTAW=1134
 PALSTAH=1620
