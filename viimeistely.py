@@ -61,7 +61,7 @@ eprint(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1995']))
 eprint(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1974,', '1990-91']))
 eprint(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1952,', '1993']))
 
-valmiitsukunimet = ("nen", 'ola', 'ala', "salmi", "ola", "mäki", "ila")
+valmiitsukunimet = ("nen", 'ola', 'ala', "salmi", "ola", "mäki", "ila", "Kaski", "Hopiavuori")
 
 def viimeisteleAsukas(lause, ammattilause, psukunimi):   
 	lause=poistaPilkut(lause)
@@ -170,8 +170,11 @@ def viimeisteleLapset(lause):
 					uusilapsi==dict()
 					uusilapsi["etunimet"]=[]
 				else:
-					uusilapsi["etunimet"].append(s)
-					assert(len(uusilapsi["etunimet"])<=3)
+					if s.endswith(valmiitsukunimet):
+						uusilapsi["sukunimi"]=s
+					else:
+						uusilapsi["etunimet"].append(s)
+						assert(len(uusilapsi["etunimet"])<=3)
 	if(len(uusilapsi["etunimet"])>0):
 		lapset.append(copy.deepcopy(uusilapsi))
 	return lapset
@@ -189,6 +192,8 @@ eprint(viimeisteleLapset(['Lapset:', 'Kari', 'Olavi', '1954,', 'Ari', 'Tapio', '
 eprint(viimeisteleLapset(['Lapset:', 'Janica', '1988,', 'Susanne', '1989,', 'Jonathan', 'ja', 'Robin', '1992']))
 
 eprint(viimeisteleLapset(['Lapset:', 'Kirsi,', 'Riia']))
+
+eprint(viimeisteleLapset(['Lapset:', 'Roy', 'Krister', 'Mikael', 'Hopiavuori', '1971']))
 
 
 #eprint(viimeisteleLapset())
