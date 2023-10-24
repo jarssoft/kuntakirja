@@ -63,7 +63,7 @@ eprint(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1995']))
 eprint(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1974,', '1990-91']))
 eprint(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1952,', '1993']))
 
-valmiitsukunimet = ("nen", 'ola', 'ala', "salmi", "ola", "mäki", "ila", "Kaski", "Hopiavuori")
+valmiitsukunimet = ("nen", 'ola', 'ala', "salmi", "ola", "mäki", "Kaski", "Hopiavuori")
 
 def viimeisteleAsukas(lause, ammattilause, psukunimi):   
 	lause=poistaPilkut(lause)
@@ -145,6 +145,8 @@ eprint(viimeisteleAsukas(['Matti', 'Juha,', 's.', '28.12.1959', 'Lappi', 'TI'], 
 
 
 def viimeisteleLapset(lause):
+
+	print(lause)
 	#lause=poistaPilkut(lause)
 	assert lause[0]=="Lapset:"
 	lapset=[]
@@ -152,16 +154,17 @@ def viimeisteleLapset(lause):
 	uusilapsi["etunimet"]=[]
 	kaksoset=[]
 	for s in lause[1:]:
-		if len(s)>=4 and s[0:4].isdigit() and ")" not in s:
-			uusilapsi["syntynyt"]=int(s[0:4])
-			lapset.append(copy.deepcopy(uusilapsi))
+		if len(s)>=4 and s[0:4].isdigit() and ")" not in s:			
+			uusilapsi["syntymäaika"]=int(s[0:4])
+			if len(uusilapsi["etunimet"]) > 0:
+				lapset.append(copy.deepcopy(uusilapsi))
 			uusilapsi==dict()
 			uusilapsi["etunimet"]=[]
 			for k in kaksoset:
-				k["syntynyt"]=int(s[0:4])
+				k["syntymäaika"]=int(s[0:4])
 				lapset.append(copy.deepcopy(k))
 			kaksoset=[]
-		elif (s=="ja"):
+		elif s=="ja" and len(uusilapsi["etunimet"]) > 0:
 				kaksoset.append(copy.deepcopy(uusilapsi))
 				uusilapsi["etunimet"]=[]
 		else:
@@ -180,15 +183,16 @@ def viimeisteleLapset(lause):
 	if(len(uusilapsi["etunimet"])>0):
 		lapset.append(copy.deepcopy(uusilapsi))
 
-	"""
 	entvuosi=1800
 	for lapsi in lapset:
-		vuosi=lapsi["syntynyt"] if "syntynyt" in lapsi else entvuosi
+		vuosi=lapsi["syntymäaika"] if "syntymäaika" in lapsi else entvuosi
 		#assert(vuosi>=entvuosi)
 		if vuosi<entvuosi:
 			print("Lapset väärässä järjestyksessä.")
 		entvuosi=vuosi
-	"""
+
+		assert(len(lapsi["etunimet"])>0)
+
 
 	return lapset
 
@@ -207,6 +211,12 @@ eprint(viimeisteleLapset(['Lapset:', 'Janica', '1988,', 'Susanne', '1989,', 'Jon
 eprint(viimeisteleLapset(['Lapset:', 'Kirsi,', 'Riia']))
 
 eprint(viimeisteleLapset(['Lapset:', 'Roy', 'Krister', 'Mikael', 'Hopiavuori', '1971']))
+
+eprint(viimeisteleLapset(['Lapset:', 'Matti', '1952', 'Erkki', '1955', 'ja', 'Urho', '1956']))
+
+eprint(viimeisteleLapset(['Lapset:', 'Ailin', 'poika:', 'Pekka', '1952']))
+
+eprint(viimeisteleLapset(['Lapset:', 'Aila', '1962,', 'Tuomo', '1963']))
 
 #eprint(viimeisteleLapset(['Lapset:', 'Janica', '2000,', 'Susanne', '1989,', 'Jonathan', 'ja', 'Robin', '1992']))
 
