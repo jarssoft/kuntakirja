@@ -65,7 +65,19 @@ eprint(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1952,', 
 
 valmiitsukunimet = ("nen", 'ola', 'ala', "salmi", "ola", "mäki", "Kaski", "Hopiavuori")
 
-def viimeisteleAsukas(lause, ammattilause, psukunimi):   
+def viimeisteleAsukas(lause, ammattilause, psukunimi):
+
+	if lause==['Jaakkola', 'Eeli', 'ja', 'Sylvi,', 'perikunta']:
+		return {"etunimet":"Eeli", "sukunimi:": "Jaakkola"}
+	if lause==['Kalli', 'Sylvi', 'ja', 'Toivo,', 'perikunta']:
+		return {"etunimet":"Sylvi", "sukunimi:": "Kalli"}
+	if lause==['Liimola,', 'perikunta']:
+		return {"etunimet":"Niilo", "sukunimi:": "Liimola"}
+	if lause==['Linnala,', 'perikunta']:
+		return {"etunimet":"Esa", "sukunimi:": "Linnala"}
+	
+	print(lause)
+
 	lause=poistaPilkut(lause)
 	mode=0
 	etunimet=[]
@@ -105,6 +117,7 @@ def viimeisteleAsukas(lause, ammattilause, psukunimi):
 
 	asukas=dict()
 	asukas["etunimet"]=etunimet
+	assert(len(etunimet)>0)
 	if sukunimi != None:
 		asukas["sukunimi"]=sukunimi
 	if osnimi != None:
@@ -146,7 +159,7 @@ eprint(viimeisteleAsukas(['Matti', 'Juha,', 's.', '28.12.1959', 'Lappi', 'TI'], 
 
 def viimeisteleLapset(lause):
 
-	print(lause)
+	#print(lause)
 	#lause=poistaPilkut(lause)
 	assert lause[0]=="Lapset:"
 	lapset=[]
