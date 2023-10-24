@@ -217,6 +217,14 @@ def parsiResults(results, minconf):
 
 				if w==1:
 					if(len(rivi)>0):
+
+
+						if rivi==['MTT', 'RUOKA', 'Marjukka', 'Paavola,', 's.', '14.3.1978', 'Eurajoki']:
+							rivi=['Mari-Sanna', 'Marjukka', 'Paavola,', 's.', '14.3.1978', 'Eurajoki']
+
+						if rivi==['amäki', '(o.s.', 'Jussila),', 's.', '25.11.1946']:
+							rivi=['Liisa', 'Kaarina', 'Kukkamäki', '(o.s.', 'Jussila),', 's.', '25.11.1946']							
+
 						eprint(lasty, rivi)
 
 						if(len(rivi)<1600):
@@ -249,7 +257,7 @@ def parsiResults(results, minconf):
 										if "asukas1" not in perhe:
 											perhe["asukas1"]=rivi
 											assert(lasty>920)
-										else:
+										elif "asukas2" not in perhe:
 											perhe["asukas2"]=rivi
 											assert(lasty>920)
 									else:
@@ -287,7 +295,7 @@ def parsiResults(results, minconf):
 				rivi.append(text)
 				
 		eprint()
-		#eprintdict(perhe)
+		eprintdict(perhe)
 		if(not "asukas1" in perhe):
 			return ["Perheessä pitää olla vähintään yksi asukas."]
 		assert("asukas1" in perhe)
