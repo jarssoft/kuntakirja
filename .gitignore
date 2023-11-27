@@ -1,0 +1,7 @@
+images/*
+!images/69.*png
+cache/*
+__pycache__/*
+kaios-app/node_modules
+kirja.json
+kaios-app/src/data/*

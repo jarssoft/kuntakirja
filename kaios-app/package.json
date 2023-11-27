@@ -1,0 +1,37 @@
+{
+  "name": "my-first-react-app-kaios",
+  "version": "0.1.0",
+  "homepage": "./", 
+  "private": true,
+  "dependencies": {
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-scripts": "3.0.1",
+    "b2gclitool" : "https://github.com/fabricedesre/b2gclitool.git"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "adb:connect": "adb forward tcp:6000 localfilesystem:/data/local/debugger-socket",
+    "b2g:uninstall": "node ./node_modules/b2gclitool/b2g.js uninstall my-first-react-app-kaios",
+    "b2g:install": "node ./node_modules/b2gclitool/b2g.js install ./build",
+    "deploy": "npm run build && npm run adb:connect && ( npm run b2g:uninstall || echo ) && npm run b2g:install"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
