@@ -1,5 +1,5 @@
 import math  
-from pytesseract import Output
+from pytesseract import Output #version 0.3.10
 import pytesseract
 import cv2
 import pickle
