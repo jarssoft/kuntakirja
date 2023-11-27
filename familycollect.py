@@ -5,15 +5,19 @@ import itertools
 import copy
 
 fails=0
-for p in range(69,465):
+last="Aaaa"
+for p in range(69,464):
     print("parse",p,end="")
     perheet=parseFile(str(p)+".png", 0, 0)
     print(" OK" if len(perheet)==4 else " Fail " + perheet[0])
     if len(perheet)!=4:
         fails+=1
-    #else:
-        #for perhe in perheet:
-            #print (perhe["sukunimi"])
+    else:
+        for perhe in perheet:
+            print (perhe["sukunimi"])
+            assert perhe["sukunimi"]>=last
+            last=perhe["sukunimi"]
+            
 print("Total fails ",fails)
 
 exit(0)

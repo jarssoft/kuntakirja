@@ -23,6 +23,15 @@ def errorline():
 
 # loop over each of the individual text localizations
 
+def korjaasukunimi(text):
+	if text=="Aijälä":
+		text="Äijälä"
+	if text=="Arnfors":
+		text="Ärnfors"
+	if text[0].startswith(('i','l')):
+		text="I"+text[1:]
+	return text
+
 def parsiResults(results, minconf):
 
 	sukunimet=[]
@@ -73,16 +82,16 @@ def parsiResults(results, minconf):
 		# extract the OCR text itself along with the confidence of the
 		# text localization
 		text = results["text"][i]
+		#assert(text!="Aijälä"),text
 		
 		conf = int(results["conf"][i])
 
 		korkeusy = results["top"][kylat[0]]-y
 
 		# filter out weak confidence text localizations
-		if(len(text)>1):
-			if text[0].startswith(('i','l')):
-				text="I"+text[1:]
-			if conf > minconf and ((h > 36 and h < 55) or False) and w == 1 and text!="Lapset:" and text[0].isupper() and y < 2000: #poistettu abs(korkeusy-82)<5
+		if(len(text)>1):			
+			text=korjaasukunimi(text)
+			if conf > minconf and ((h > 36 and h < 55) or abs(korkeusy-82)<5) and w == 1 and text!="Lapset:" and text[0].isupper() and y < 2000: #poistettu abs(korkeusy-82)<5
 				# display the confidence and text to our terminal
 				eprint("Confidence: {}".format(conf))
 				eprint("x: {}".format(x))
@@ -115,7 +124,7 @@ def parsiResults(results, minconf):
 	if(len(samat)!=4):
 		return [errorline()+"len(samat)!=4 "+str(samat)]
 	
-	if(ero(samat[0], samat[3])>4*255):
+	if(ero(samat[0], samat[-1])>4*255):
 		return [errorline()+"Sukunimet liian kaukana toisistaan"+str(samat)]
 
 	paasukunimet=[]
@@ -142,8 +151,7 @@ def parsiResults(results, minconf):
 
 		# filter out weak confidence text localizations
 		if(len(text)>1):
-			if text[0].startswith(('i','l')):
-				text="I"+text[1:]
+			text=korjaasukunimi(text)
 			if text in samat and y < 2000:
 				# display the confidence and text to our terminal
 				eprint("Confidence: {}".format(conf))
@@ -169,7 +177,7 @@ def parsiResults(results, minconf):
 		eprint("\n-------------------")
 
 		rivi=[]
-		perhe = dict(sukunimi = results["text"][paasukunimet[0+a]])
+		perhe = dict(sukunimi = korjaasukunimi(results["text"][paasukunimet[0+a]]))
 		yoffset = results["top"][paasukunimet[0+a]]
 		lasty=-1
 		
@@ -230,6 +238,9 @@ def parsiResults(results, minconf):
 
 						if rivi==['rd', 'Eeva', 'Kaarina', '1968,', 'Tuula', 'Kristiina', '1973,', 'Mirja', 'Susanna']:
 							rivi=['1965', 'Eeva', 'Kaarina', '1968,', 'Tuula', 'Kristiina', '1973,', 'Mirja', 'Susanna']
+
+						#if rivi==['Aijälä']:
+						#	rivi=['Äijälä']
 
 						eprint(lasty, rivi)
 
