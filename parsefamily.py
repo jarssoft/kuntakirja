@@ -82,7 +82,7 @@ def parsiResults(results, minconf):
 		if(len(text)>1):
 			if text[0].startswith(('i','l')):
 				text="I"+text[1:]
-			if conf > minconf and ((h > 36 and h < 55) or abs(korkeusy-82)<5) and w == 1 and text!="Lapset:" and text[0].isupper():
+			if conf > minconf and ((h > 36 and h < 55) or False) and w == 1 and text!="Lapset:" and text[0].isupper() and y < 2000: #poistettu abs(korkeusy-82)<5
 				# display the confidence and text to our terminal
 				eprint("Confidence: {}".format(conf))
 				eprint("x: {}".format(x))
@@ -144,7 +144,7 @@ def parsiResults(results, minconf):
 		if(len(text)>1):
 			if text[0].startswith(('i','l')):
 				text="I"+text[1:]
-			if text in samat:
+			if text in samat and y < 2000:
 				# display the confidence and text to our terminal
 				eprint("Confidence: {}".format(conf))
 				eprint("x: {}".format(x))
@@ -153,6 +153,7 @@ def parsiResults(results, minconf):
 				eprint("")
 				paasukunimet.append(i)
 
+	assert((len(paasukunimet)==4))
 	if(len(paasukunimet)!=4):
 		return [errorline()+"len(paasukunimet)!=4, "+str(list(map(lambda s: results["text"][s], paasukunimet)))+str(samat)]
 	
@@ -218,12 +219,17 @@ def parsiResults(results, minconf):
 				if w==1:
 					if(len(rivi)>0):
 
-
 						if rivi==['MTT', 'RUOKA', 'Marjukka', 'Paavola,', 's.', '14.3.1978', 'Eurajoki']:
 							rivi=['Mari-Sanna', 'Marjukka', 'Paavola,', 's.', '14.3.1978', 'Eurajoki']
 
 						if rivi==['amäki', '(o.s.', 'Jussila),', 's.', '25.11.1946']:
 							rivi=['Liisa', 'Kaarina', 'Kukkamäki', '(o.s.', 'Jussila),', 's.', '25.11.1946']							
+
+						if rivi==['Jannen', 'isoisovanhemmat', 'Fredrik', 'ja', 'Aleksandra', 'Salonen', 'ostivat']:
+							rivi=['Jannen', 'isoisovanhemmat', 'Fredrik', 'ja', 'Aleksandra', 'ostivat']
+
+						if rivi==['rd', 'Eeva', 'Kaarina', '1968,', 'Tuula', 'Kristiina', '1973,', 'Mirja', 'Susanna']:
+							rivi=['1965', 'Eeva', 'Kaarina', '1968,', 'Tuula', 'Kristiina', '1973,', 'Mirja', 'Susanna']
 
 						eprint(lasty, rivi)
 
@@ -249,28 +255,30 @@ def parsiResults(results, minconf):
 								if(rivi[0] == "Laajennus"):
 									perhe["laajennus/remontti"]=rivi
 						
-							if lasty>920 and "lapset" not in perhe and "kuvaus" not in perhe:
+							if lasty>910 and "lapset" not in perhe and "kuvaus" not in perhe:
 								if(rivi[0] == "avioliitto" or rivi[0] == "avoliitto"):
 									perhe["liitto"]=rivi
 								else:
-									if('s.' in rivi or perhe["sukunimi"] in rivi):
+									if('perikunta' in rivi or 's.' in rivi or '(o.s.' in rivi or (perhe["sukunimi"] in rivi and rivi.index(perhe["sukunimi"])>0)):
 										if "asukas1" not in perhe:
 											perhe["asukas1"]=rivi
-											assert(lasty>920)
+											assert(lasty>910)
 										elif "asukas2" not in perhe:
 											perhe["asukas2"]=rivi
-											assert(lasty>920)
+											assert(lasty>910)
+										else:
+											perhe["asukas2"]+=rivi
 									else:
 										if "asukas1" in perhe and "ammatti1" not in perhe and "asukas2" not in perhe:
 											if(rivi[-1].endswith(ammatit)):
 												perhe["ammatti1"]=rivi
-												assert(lasty>920)
+												assert(lasty>910)
 											else:
 												eprint("!!!!!!!!!!!!!!!!!!")
 										if "asukas2" in perhe and "ammatti2" not in perhe:
 											if(rivi[-1].endswith(ammatit)):
 												perhe["ammatti2"]=rivi
-												assert(lasty>920)
+												assert(lasty>910)
 											else:
 												eprint("!!!!!!!!!!!!!!!!!!")
 
@@ -296,9 +304,13 @@ def parsiResults(results, minconf):
 				
 		eprint()
 		eprintdict(perhe)
-		if(not "asukas1" in perhe):
-			return ["Perheessä pitää olla vähintään yksi asukas."]
+		
 		assert("asukas1" in perhe)
+		if(not "asukas1" in perhe):
+			print(perhe)
+			return ["Perheessä pitää olla vähintään yksi asukas."]
+
+		
 
 		perheet.append(viimeistelePerhe(perhe))
 		

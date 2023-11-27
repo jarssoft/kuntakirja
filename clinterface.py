@@ -24,4 +24,4 @@ if(args["succeed"]):
 else:
 	for perhe in perheet:
 		print()
-		eprintdict(perhe)
+		print(perhe)

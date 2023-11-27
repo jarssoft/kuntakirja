@@ -1,7 +1,7 @@
 import copy
 from rutiinit import *
 from functools import reduce
-
+import json
 
 def viimeisteleMateriaali(lause):
 	lause=poistaPilkut(lause)
@@ -63,7 +63,7 @@ eprint(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1995']))
 eprint(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1974,', '1990-91']))
 eprint(viimeisteleLaajennusTaiRemontti(['Laajennus', '/', 'remontti:', '1952,', '1993']))
 
-valmiitsukunimet = ("nen", 'ola', 'ala', "salmi", "ola", "mäki", "Kaski", "Hopiavuori")
+valmiitsukunimet = ("nen", 'ola', 'ala', "salmi", "ola", "mäki", "Kaski", "Liski", "Hopiavuori", "holm", "Ovaska")
 
 def viimeisteleAsukas(lause, ammattilause, psukunimi):
 
@@ -75,8 +75,20 @@ def viimeisteleAsukas(lause, ammattilause, psukunimi):
 		return {"etunimet":"Niilo", "sukunimi:": "Liimola"}
 	if lause==['Linnala,', 'perikunta']:
 		return {"etunimet":"Esa", "sukunimi:": "Linnala"}
-	
-	print(lause)
+	if lause==['Mäntylä', 'Heikki', 'ja', 'Saara,', 'perikunta']:
+		return {"etunimet":"Heikki", "sukunimi:": "Mäntylä"}
+	if lause==['Rekola', 'Yrjö', 'ja', 'Toini,', 'perikunta']:
+		return {"etunimet":"Yrjö", "sukunimi:": "Rekola"}
+	if lause==['Reunanen,', 'perikunta']:
+		return {"etunimet":"Aina", "sukunimi:": "Reunanen"}
+	if lause==['Siiri', 'Eero,', 'perikunta']:
+		return {"etunimet":"Eero", "sukunimi:": "Siiri"}
+	if lause==['Suominen,', 'perikunta']:
+		return {"etunimet":"?", "sukunimi:": "Suominen"}
+	if lause==['Virtanen', 'Olga,', 'perikunta']:
+		return {"etunimet":"Olga", "sukunimi:": "Virtanen"}	
+			
+	eprint(lause)
 
 	lause=poistaPilkut(lause)
 	mode=0

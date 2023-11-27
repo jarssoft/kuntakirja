@@ -5,18 +5,21 @@ import itertools
 import copy
 
 fails=0
-for p in range(69,270):
+for p in range(69,465):
     print("parse",p,end="")
     perheet=parseFile(str(p)+".png", 0, 0)
     print(" OK" if len(perheet)==4 else " Fail " + perheet[0])
     if len(perheet)!=4:
         fails+=1
+    #else:
+        #for perhe in perheet:
+            #print (perhe["sukunimi"])
 print("Total fails ",fails)
 
-#exit(0)
+exit(0)
 
 perheet=[]
-for p in range(69,270):
+for p in range(69,419):
     print("parse ",p)
     uudet=parseFile(str(p)+".png", 0, 0)
     #for kuva in range(0,4):
@@ -39,14 +42,14 @@ for perhe in perheet:
     #print()
     print(perhe["sukunimi"])
     for asukas in perhe["asukkaat"]:
-        if "syntymäaika" in asukas and asukas["syntymäaika"]==1962:
+        if "syntymäaika" in asukas and asukas["syntymäaika"]==1981:
             print(asukas)
     if "lapset" in perhe:
         for lapsi in perhe["lapset"]:
-            if "syntymäaika" in lapsi and lapsi["syntymäaika"]==1962:                   
+            if "syntymäaika" in lapsi and lapsi["syntymäaika"]==1981:                   
                 print(lapsi)
 
-
+exit(0)
 print("Etsi samat:")
 
 for vuosi in range (1900,2004):
@@ -98,3 +101,6 @@ i2=692
 
 print(perheet[i1])
 print(perheet[i2])
+
+#y = json.dumps(perheet)
+#print(y)

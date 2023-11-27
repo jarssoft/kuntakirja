@@ -16,11 +16,27 @@ eprint(poistaTavuviivat([]))
 def poistaPilkut(lause):
 	return list(map(lambda a : (a if (a=="" or a[-1]!=',') else a[0:-1]) , lause))
 
-def ero(nimi, vnimi):
-	return abs(ord(nimi[0])-ord(vnimi[0]))*255 + abs(ord(nimi[1])-ord(vnimi[1]))
+kirjaimet="ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ"
+pienet="abcdefghijklmnopqrstuvwxyzåäö"
 
-assert(ero("Jari", "Ilona") == 255+11)
+def ford(c):
+	return  kirjaimet.index(c)  if c in kirjaimet else pienet.index(c)
+
+def fstr(str):
+	#print (str)
+	#print("0:", ford(str[0]))
+	#print("1:", ford(str[1]))
+	return ford(str[0])*len(kirjaimet)+ford(str[1])
+
+def ero(nimi, vnimi):
+	#return abs(ord(nimi[0])-ord(vnimi[0]))*255 + abs(ord(nimi[1])-ord(vnimi[1]))
+	#strord = ford(nimi[0])*len(kirjaimet)+ford(nimi[1])
+	#vstrord = ford(vnimi[0])*len(kirjaimet)+ford(vnimi[1])
+	return abs(fstr(vnimi)-fstr(nimi))
+
+assert(ero("Jari", "Ilona") == abs(-29+11))
 assert(ero("Saari", "Salonen") == 0)
+assert(ero("Söderman", "Tahkoniemi")==1)
 
 def etaisyydet(nimet):
 	pal=[]
@@ -37,6 +53,6 @@ def yleisemmatEnsin(nimet):
 
 def eprintdict(cars):
 	for value in cars:
-		print (value,':',cars[value])
+		eprint (value,':',cars[value])
 		
         
