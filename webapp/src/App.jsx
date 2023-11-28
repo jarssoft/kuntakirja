@@ -2,6 +2,7 @@ import { useState } from "react";
 import viteLogo from "/eurajoki.svg";
 import "./App.css";
 import Hakukentta from "./controls/Hakukentta.jsx";
+import Hakutulos from "./controls/Hakutulos.jsx";
 import asukkaat from "./data/eurajoki.json";
 
 function App() {
@@ -27,11 +28,13 @@ function App() {
     </div>
   ) : (
     <>
-      <img src={viteLogo} className="slogo" alt="Eurajoen vaakuna" />
+      <a href="/" target="_blank">
+        <img src={viteLogo} className="slogo" alt="Eurajoen vaakuna" />
+      </a>
       <Hakukentta />
       <div className="card">
         {asukkaat.map((talo) => (
-          <li>{talo.sukunimi}</li>
+          <Hakutulos talo={talo} />
         ))}
       </div>
     </>
