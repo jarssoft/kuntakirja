@@ -128,6 +128,7 @@ def parsiResults(results, minconf):
 		return [errorline()+"Sukunimet liian kaukana toisistaan"+str(samat)]
 
 	paasukunimet=[]
+	kuvat=[]
 
 	for i in sukunimet:
 		# extract the bounding box coordinates of the text region from
@@ -160,6 +161,7 @@ def parsiResults(results, minconf):
 				eprint("Text: {}".format(text))
 				eprint("")
 				paasukunimet.append(i)
+				kuvat.append((x,y))				
 
 	assert((len(paasukunimet)==4))
 	if(len(paasukunimet)!=4):
@@ -310,7 +312,6 @@ def parsiResults(results, minconf):
 					lastlasty=lasty
 					lasty=y
 
-
 				rivi.append(text)
 				
 		eprint()
@@ -321,15 +322,18 @@ def parsiResults(results, minconf):
 			print(perhe)
 			return ["Perheessä pitää olla vähintään yksi asukas."]
 
-		
-
 		perheet.append(viimeistelePerhe(perhe))
 		
 		eprint()
 		#eprintdict(perhe)
 
 	perheet[2], perheet[1] = perheet[1], perheet[2]
-	return perheet
+	return perheet, kuvat
+
+def cropFile(imagefile, piste, i):
+	image = cv2.imread("images/"+imagefile)
+	cropped_image = image[(piste[1]+370):(piste[1]+900), (piste[0]):(piste[0]+950)]
+	cv2.imwrite("photos/"+imagefile+"-"+str(i)+".jpg", cropped_image)
 
 def parseFile(imagefile, useCache, minconf):
 
@@ -350,7 +354,11 @@ def parseFile(imagefile, useCache, minconf):
 	with open(ocrcachefile, "rb") as fp:   # Unpickling
 		results = pickle.load(fp)
 
-	return parsiResults(results, minconf)
+	pal = parsiResults(results, minconf)
+	#for i in range(0,4):
+	#	cropFile(imagefile, pal[1][i], i)
+
+	return pal[0]
 
 """
 if topleft>0:

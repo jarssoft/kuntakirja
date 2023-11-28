@@ -5,3 +5,5 @@ __pycache__/*
 kaios-app/node_modules
 kirja.json
 kaios-app/src/data/*
+kaios-app/build/*
+photos/*

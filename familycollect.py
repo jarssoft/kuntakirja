@@ -14,16 +14,16 @@ for p in range(69,464):
         fails+=1
     else:
         for perhe in perheet:
-            print (perhe["sukunimi"])
+            #print (perhe["sukunimi"])
             assert perhe["sukunimi"]>=last
             last=perhe["sukunimi"]
             
 print("Total fails ",fails)
 
-exit(0)
+#exit(0)
 
 perheet=[]
-for p in range(69,419):
+for p in range(69,464):
     print("parse ",p)
     uudet=parseFile(str(p)+".png", 0, 0)
     #for kuva in range(0,4):
@@ -53,7 +53,7 @@ for perhe in perheet:
             if "syntymäaika" in lapsi and lapsi["syntymäaika"]==1981:                   
                 print(lapsi)
 
-exit(0)
+#exit(0)
 print("Etsi samat:")
 
 for vuosi in range (1900,2004):
@@ -106,5 +106,7 @@ i2=692
 print(perheet[i1])
 print(perheet[i2])
 
-#y = json.dumps(perheet)
+y = json.dumps(perheet)
 #print(y)
+with open("kaios-app/src/data/eurajoki.json", "w") as text_file:
+    text_file.write(y)
