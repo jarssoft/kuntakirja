@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Hakutulos({ talo }) {
   return (
     <div className="search-result new-job">
@@ -9,7 +11,7 @@ function Hakutulos({ talo }) {
       </div>
       <div className="content">
         <h2>
-          <a href={`/talo/${talo.asukkaat[0].perhe}`}>{talo.sukunimi}</a>
+          <Link to={`/talo/${talo.asukkaat[0].perhe}`}>{talo.sukunimi}</Link>
         </h2>
         <p>
           <span className="company">
