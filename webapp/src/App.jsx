@@ -1,22 +1,22 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
 import viteLogo from "/eurajoki.svg";
 import "./App.css";
+import Hakukentta from "./controls/Hakukentta.jsx";
+import asukkaat from "./data/eurajoki.json";
 
 function App() {
   const [count, setCount] = useState(0);
 
-  return (
-    <>
+  return count == 0 ? (
+    <div className="etusivu">
       <div>
         <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
+          <img src={viteLogo} className="logo" alt="Eurajoen vaakuna" />
         </a>
       </div>
       <h1>Eurajoki</h1>
       <div className="card">
-        <input></input>
-        <button onClick={() => setCount((count) => count + 1)}>Etsi</button>
+        <Hakukentta etsi={() => setCount(1)} />
         <p>
           Edit <code>src/App.jsx</code> and save to test HMR
         </p>
@@ -24,6 +24,16 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+    </div>
+  ) : (
+    <>
+      <img src={viteLogo} className="slogo" alt="Eurajoen vaakuna" />
+      <Hakukentta />
+      <div className="card">
+        {asukkaat.map((talo) => (
+          <li>{talo.sukunimi}</li>
+        ))}
+      </div>
     </>
   );
 }

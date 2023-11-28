@@ -2,9 +2,18 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
+}
+
+.etusivu {
   text-align: center;
 }
 
+.slogo {
+  height: 2em;
+  padding: 0em 1em;
+  will-change: filter;
+  transition: filter 300ms;
+}
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -39,4 +48,8 @@
 
 .read-the-docs {
   color: #888;
+}
+
+form {
+  display: inline;
 }
