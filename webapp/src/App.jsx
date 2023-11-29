@@ -19,8 +19,11 @@ function App() {
 
   const hae = (haku) => {
     console.log(haku);
-    navigate("/haku/" + haku);
+    if (haku && haku != "") {
+      navigate("/haku/" + haku);
+    }
   };
+
   return (
     <>
       <div className="card">
