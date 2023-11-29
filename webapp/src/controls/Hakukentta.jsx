@@ -1,12 +1,23 @@
 import { useState } from "react";
 
-function Hakukentta({ etsi }) {
-  const [count, setCount] = useState(0);
+function Hakukentta({ hakusana, etsi }) {
+  const [haku, setHaku] = useState(hakusana);
 
   return (
-    <form onSubmit={etsi}>
-      <input></input>
-      <button onClick={() => setCount((count) => count + 1)}>Etsi</button>
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        etsi(haku);
+      }}
+    >
+      <input
+        value={haku}
+        onChange={(event) => {
+          //console.log(haku);
+          setHaku(event.target.value);
+        }}
+      ></input>
+      <button type="submit">Etsi</button>
     </form>
   );
 }

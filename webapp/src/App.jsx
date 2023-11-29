@@ -9,13 +9,18 @@ import asukkaat from "./data/eurajoki.json";
 import { useMatch, Routes, Route, useNavigate, Link } from "react-router-dom";
 
 function App() {
-  const [count, setCount] = useState(0);
   const navigate = useNavigate();
   const match = useMatch("/talo/:id");
   const talo = match ? asukkaat[match.params.id] : null;
+  const match2 = useMatch("/haku/:id");
+  const hakusana = match2 ? match2.params.id : null;
 
-  console.log(match);
+  //console.log(match);
 
+  const hae = (haku) => {
+    console.log(haku);
+    navigate("/haku/" + haku);
+  };
   return (
     <>
       <div className="card">
@@ -29,7 +34,7 @@ function App() {
                 </div>
                 <h1>Eurajoki</h1>
                 <div className="card">
-                  <Hakukentta etsi={() => navigate("/haku")} />
+                  <Hakukentta etsi={hae} />
                   <p>
                     Edit <code>src/App.jsx</code> and save to test HMR
                   </p>
@@ -41,10 +46,10 @@ function App() {
             }
           />
           <Route
-            path="/haku"
+            path="/haku/:id"
             element={
               <>
-                <Ylapalkki />
+                <Ylapalkki hakusana={hakusana} etsi={hae} />
                 {asukkaat.map((talo) => (
                   <Hakutulos talo={talo} />
                 ))}
@@ -55,7 +60,7 @@ function App() {
             path="/talo/:id"
             element={
               <>
-                <Ylapalkki />
+                <Ylapalkki hakusana={hakusana} etsi={hae} />
                 <Tietosivu talo={talo} />
               </>
             }

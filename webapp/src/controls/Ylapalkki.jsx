@@ -2,13 +2,13 @@ import { Link } from "react-router-dom";
 import viteLogo from "/eurajoki.svg";
 import Hakukentta from "./Hakukentta.jsx";
 
-function Ylapalkki({ etsi }) {
+function Ylapalkki({ hakusana, etsi }) {
   return (
     <>
       <Link to="/">
         <img src={viteLogo} className="slogo" alt="Eurajoen vaakuna" />
       </Link>
-      <Hakukentta />
+      <Hakukentta hakusana={hakusana} etsi={etsi} />
     </>
   );
 }
