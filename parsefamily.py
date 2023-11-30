@@ -328,6 +328,7 @@ def parsiResults(results, minconf):
 		#eprintdict(perhe)
 
 	perheet[2], perheet[1] = perheet[1], perheet[2]
+	kuvat[2], kuvat[1] = kuvat[1], kuvat[2]
 	return perheet, kuvat
 
 def cropFile(imagefile, piste, i):
@@ -355,7 +356,7 @@ def parseFile(imagefile, useCache, minconf):
 		results = pickle.load(fp)
 
 	pal = parsiResults(results, minconf)
-	#for i in range(0,4):
+	##for i in range(0,4):
 	#	cropFile(imagefile, pal[1][i], i)
 
 	return pal[0]

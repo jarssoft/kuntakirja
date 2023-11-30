@@ -23,15 +23,29 @@ print("Total fails ",fails)
 #exit(0)
 
 perheet=[]
+pid=0
 for p in range(69,464):
     print("parse ",p)
     uudet=parseFile(str(p)+".png", 0, 0)
     #for kuva in range(0,4):
     #    uudet[kuva]["kirjassa"]={"sivu": p, "kuva": kuva}
-    perheet+=uudet
+    for perhe in uudet:
+        del perhe ['sukunimi']
+        del perhe ['asukkaat']
+        if "liitto" in perhe:
+            del perhe ['liitto']
+        if "lapset" in perhe:
+            del perhe ['lapset']
+        if "kuvaus" in perhe:
+            del perhe ['kuvaus']
+        perhe["id"]=pid
+        if "tontti" in perhe:
+            perheet.append(perhe)        
+        pid=pid+1
+    #perheet+=uudet
 
 print("-----------------")
-
+"""
 for perhe in perheet:
     #print()
     if("sukunimi" in perhe):
@@ -99,7 +113,7 @@ for vuosi in range (1900,2004):
                 if "kaksoiskappaleet" not in henkilo2:
                     henkilo2["kaksoiskappaleet"]=[]
                 henkilo2["kaksoiskappaleet"].append(henkilo1["perhe"])                
-
+"""
 i1=690
 i2=692
 
