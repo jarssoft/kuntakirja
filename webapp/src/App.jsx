@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import viteLogo from "/eurajoki.svg";
 import "./App.css";
 import Hakukentta from "./controls/Hakukentta.jsx";
@@ -6,6 +6,7 @@ import Hakutulos from "./controls/Hakutulos.jsx";
 import Tietosivu from "./controls/Tietosivu.jsx";
 import Ylapalkki from "./controls/Ylapalkki.jsx";
 import asukkaat from "./data/eurajoki.json";
+import noteService from "./services/asukkaat";
 import { useMatch, Routes, Route, useNavigate, Link } from "react-router-dom";
 
 function App() {
@@ -23,6 +24,14 @@ function App() {
       navigate("/haku/" + haku);
     }
   };
+
+  useEffect(() => {
+    if (hakusana) {
+      noteService.getAll(hakusana).then((response) => {
+        console.log(response.data);
+      });
+    }
+  }, [hakusana]);
 
   return (
     <>
