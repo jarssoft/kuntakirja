@@ -9,18 +9,11 @@ function Tietosivu({ talo }) {
       <div className="card">
         <h1 className={css.nimi}>{talo["sukunimi"]}</h1>
         <div>
-          {talo.tontti ? `${talo.tontti}, ` : ""}
-          {talo["pinta-ala"] && talo["pinta-ala"] > 0
-            ? `${talo["pinta-ala"]} ha, `
+          Eurajoki &gt; {talo.kyla}
+          {talo.tontti ? ` > ${talo.tontti}` : ""}
+          {talo["pinta-ala"] && talo["pinta-ala"] > 1
+            ? ` (${talo["pinta-ala"]} ha)`
             : ""}
-          {talo.kyla}
-        </div>
-        <div>
-          Päärakennus:
-          {talo.rakennusmateriaali
-            ? ` ${talo.rakennusmateriaali.join(", ")} `
-            : ""}
-          {talo.rakennusvuosi ? ` (${talo.rakennusvuosi})` : ""}
         </div>
       </div>
 
@@ -37,9 +30,8 @@ function Tietosivu({ talo }) {
             <div className={css.asukkaat} key={index}>
               {`${asukas.etunimet.join(" ")}`}
               {/* </div><div className={css.asukkaat}>*/}
-            </div>
-            <div>
-              {asukas.osnimi ? `O.s. ${asukas.osnimi}, ` : " "}
+
+              {asukas.osnimi ? ` O.s. ${asukas.osnimi}, ` : " "}
               {asukas.syntymäaika ? `s. ${asukas.syntymäaika} ` : " "}
               {asukas.syntymäpaikka ? asukas.syntymäpaikka : ""}
             </div>
@@ -54,18 +46,25 @@ function Tietosivu({ talo }) {
         </div>
       </div>
 
+      {talo.lapset ? (
+        <div className="card">
+          Lapset:&nbsp;
+          {talo.lapset
+            .map((lapsi) => lapsi.etunimet[0] + " " + lapsi.syntymäaika)
+            .join(", ")}
+        </div>
+      ) : (
+        ""
+      )}
+
       <div className="card">
-        {talo.lapset ? (
-          <div>
-            Lapset:&nbsp;
-            {talo.lapset
-              .map((lapsi) => lapsi.etunimet[0] + " " + lapsi.syntymäaika)
-              .join(", ")}
-          </div>
-        ) : (
-          ""
-        )}
+        Päärakennus:
+        {talo.rakennusmateriaali
+          ? ` ${talo.rakennusmateriaali.join(", ")} `
+          : ""}
+        {talo.rakennusvuosi ? ` (${talo.rakennusvuosi})` : ""}
       </div>
+
       <div className="card">{talo.kuvaus ? <p>{talo.kuvaus}</p> : ""}</div>
       {/*
   <p className={css.todos}>

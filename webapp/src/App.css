@@ -1,7 +1,6 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
 }
 
 .etusivu {
@@ -10,7 +9,7 @@
 
 .slogo {
   height: 2em;
-  padding: 0em 3em;
+  padding: 0em 1em;
   will-change: filter;
   transition: filter 300ms;
   vertical-align: middle;
@@ -44,7 +43,7 @@
 }
 
 .card {
-  padding: 2em;
+  padding: 0.75em;
 }
 
 .read-the-docs {
