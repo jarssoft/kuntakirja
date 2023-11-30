@@ -6,5 +6,5 @@ kaios-app/node_modules
 kirja.json
 kaios-app/src/data/*
 kaios-app/build/*
-photos/*
 webapp/src/data/*
+webapp/photos/*
