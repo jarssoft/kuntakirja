@@ -9,4 +9,4 @@ kaios-app/build/*
 webapp/src/data/*
 webapp/photos/*
 webapp-backend/node_modules
-webapp-backend/data/*
+eurajoki.json
