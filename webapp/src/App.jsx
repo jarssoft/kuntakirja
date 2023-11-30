@@ -5,14 +5,17 @@ import Hakukentta from "./controls/Hakukentta.jsx";
 import Hakutulos from "./controls/Hakutulos.jsx";
 import Tietosivu from "./controls/Tietosivu.jsx";
 import Ylapalkki from "./controls/Ylapalkki.jsx";
-import asukkaat from "./data/eurajoki.json";
+//import asukkaat from "./data/eurajoki.json";
 import noteService from "./services/asukkaat";
 import { useMatch, Routes, Route, useNavigate, Link } from "react-router-dom";
 
 function App() {
+  const [asukkaat, setAsukkaat] = useState([]);
   const navigate = useNavigate();
   const match = useMatch("/talo/:id");
-  const talo = match ? asukkaat[match.params.id] : null;
+  const talo = match
+    ? asukkaat.filter((talo) => talo.asukkaat[0].perhe == match.params.id)[0]
+    : null;
   const match2 = useMatch("/haku/:id");
   const hakusana = match2 ? match2.params.id : null;
 
@@ -29,6 +32,7 @@ function App() {
     if (hakusana) {
       noteService.getAll(hakusana).then((response) => {
         console.log(response.data);
+        setAsukkaat(response.data);
       });
     }
   }, [hakusana]);
