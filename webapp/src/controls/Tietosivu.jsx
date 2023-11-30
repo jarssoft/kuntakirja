@@ -1,10 +1,13 @@
 import css from "./Tiedot.module.css";
 
 function Tietosivu({ talo }) {
+  const getImageName = (perheId) =>
+    `../../photos/${Math.floor(perheId / 4) + 69}.png-${perheId % 4}.jpg`;
+
   return (
     <span>
       <div className="card">
-        <h2 className={css.nimi}>{talo["sukunimi"]}</h2>
+        <h1 className={css.nimi}>{talo["sukunimi"]}</h1>
         <div>
           {talo.tontti ? `${talo.tontti}, ` : ""}
           {talo["pinta-ala"] && talo["pinta-ala"] > 0
@@ -19,6 +22,10 @@ function Tietosivu({ talo }) {
             : ""}
           {talo.rakennusvuosi ? ` (${talo.rakennusvuosi})` : ""}
         </div>
+      </div>
+
+      <div className="card">
+        <img src={getImageName(talo.asukkaat[0].perhe)}></img>
       </div>
 
       <div className="card">

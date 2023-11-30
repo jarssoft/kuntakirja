@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
 
 function Hakutulos({ talo }) {
+  const getImageName = (perheId) =>
+    `../../photos/${Math.floor(perheId / 4) + 69}.png-${perheId % 4}.jpg`;
   return (
     <div className="search-result new-job">
-      <div className="icon">
-        <img
-          src="https://d2q79iu7y748jz.cloudfront.net/s/_squarelogo/3ae383bdcc8889a88908f3f03037b753"
-          width="60"
-        />
+      <div className="thumbnail">
+        <Link to={`/talo/${talo.asukkaat[0].perhe}`}>
+          <img src={getImageName(talo.asukkaat[0].perhe)} width="160" />
+        </Link>
       </div>
       <div className="content">
         <h2>
