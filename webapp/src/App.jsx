@@ -14,7 +14,7 @@ function App() {
   const navigate = useNavigate();
   const match = useMatch("/talo/:id");
   const talo = match
-    ? asukkaat.filter((talo) => talo.asukkaat[0].perhe == match.params.id)[0]
+    ? asukkaat.filter((talo) => talo.id == match.params.id)[0]
     : null;
   const match2 = useMatch("/haku/:id");
   const hakusana = match2 ? match2.params.id : null;

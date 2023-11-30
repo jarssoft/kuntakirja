@@ -7,10 +7,9 @@ function Tietosivu({ talo }) {
   return (
     <span>
       <div className="card">
-        <h1 className={css.nimi}>{talo["sukunimi"]}</h1>
+        <h1 className={css.nimi}>{talo.tontti ? `${talo.tontti}` : ""}</h1>
         <div>
           Eurajoki &gt; {talo.kyla}
-          {talo.tontti ? ` > ${talo.tontti}` : ""}
           {talo["pinta-ala"] && talo["pinta-ala"] > 1
             ? ` (${talo["pinta-ala"]} ha)`
             : ""}
@@ -18,54 +17,50 @@ function Tietosivu({ talo }) {
       </div>
 
       <div className="card">
-        <img
-          className={css.isokuva}
-          src={getImageName(talo.asukkaat[0].perhe)}
-        ></img>
+        <img className={css.isokuva} src={getImageName(talo.id)}></img>
       </div>
 
-      <div className="card">
-        {talo.asukkaat.map((asukas, index) => (
-          <>
-            <div className={css.asukkaat} key={index}>
-              {`${asukas.etunimet.join(" ")}`}
-              {/* </div><div className={css.asukkaat}>*/}
-
-              {asukas.osnimi ? ` O.s. ${asukas.osnimi}, ` : " "}
-              {asukas.syntymäaika ? `s. ${asukas.syntymäaika} ` : " "}
-              {asukas.syntymäpaikka ? asukas.syntymäpaikka : ""}
-            </div>
-            <div>{asukas.ammatit ? asukas.ammatit.join(", ") : ""}</div>
-          </>
-        ))}
-        <div>
-          {talo.liitto
-            ? `${talo.liitto.tyyppi} 
-           ${talo.liitto.alkaen ? `${talo.liitto.alkaen}` : ""}`
-            : ""}
-        </div>
+      <div className={css.tooltip}>
+        {talo.rakennusvuosi ? (
+          <p className={css.tooltipp}>
+            <span className={css.attributeName}>Rakennusvuosi </span>
+            <span className={css.attributeValue}>{talo.rakennusvuosi}</span>
+          </p>
+        ) : (
+          ""
+        )}
+        {talo.rakennusmateriaali ? (
+          <p className={css.tooltipp}>
+            <span className={css.attributeName}>Materiaali </span>
+            <span className={css.attributeValue}>
+              {talo.rakennusmateriaali}
+            </span>
+          </p>
+        ) : (
+          ""
+        )}
+        {talo["laajennus/remontti"] ? (
+          <p className={css.tooltipp}>
+            <span className={css.attributeName}>Remontti </span>
+            <span className={css.attributeValue}>
+              {talo["laajennus/remontti"]}
+            </span>
+          </p>
+        ) : (
+          ""
+        )}
+        {talo["pinta-ala"] ? (
+          <p className={css.tooltipp}>
+            <span className={css.attributeName}>Pinta-ala </span>
+            <span className={css.attributeValue}>
+              {talo["pinta-ala"]} hehtaaria
+            </span>
+          </p>
+        ) : (
+          ""
+        )}
       </div>
 
-      {talo.lapset ? (
-        <div className="card">
-          Lapset:&nbsp;
-          {talo.lapset
-            .map((lapsi) => lapsi.etunimet[0] + " " + lapsi.syntymäaika)
-            .join(", ")}
-        </div>
-      ) : (
-        ""
-      )}
-
-      <div className="card">
-        Päärakennus:
-        {talo.rakennusmateriaali
-          ? ` ${talo.rakennusmateriaali.join(", ")} `
-          : ""}
-        {talo.rakennusvuosi ? ` (${talo.rakennusvuosi})` : ""}
-      </div>
-
-      <div className="card">{talo.kuvaus ? <p>{talo.kuvaus}</p> : ""}</div>
       {/*
   <p className={css.todos}>
     {toDo.teksti}

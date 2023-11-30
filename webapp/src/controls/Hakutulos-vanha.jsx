@@ -6,28 +6,28 @@ function Hakutulos({ talo }) {
   return (
     <div className="search-result new-job">
       <div className="thumbnail">
-        <Link to={`/talo/${talo.id}`}>
-          <img src={getImageName(talo.id)} width="160" />
+        <Link to={`/talo/${talo.asukkaat[0].perhe}`}>
+          <img src={getImageName(talo.asukkaat[0].perhe)} width="160" />
         </Link>
       </div>
       <div className="content">
         <h2>
-          <Link to={`/talo/${talo.id}`}>{talo.tontti}</Link>
+          <Link to={`/talo/${talo.asukkaat[0].perhe}`}>{talo.sukunimi}</Link>
         </h2>
         <p>
           <span className="company">
-            <Link to={`/haku/${talo.kyla}`}>{talo.kyla}</Link>
+            <a href="/job/1234">{talo.kyla}</a>
           </span>
           -
           <a href="/reviews/1234">
             <span className="stars">
               <span className="stars-inner"></span>
             </span>
-            <span className="reviews">{talo.pintaala}</span>
+            <span className="reviews">{talo.tontti}</span>
           </a>
         </p>
         <div>
-          <p>"" &hellip;</p>
+          <p>{talo.kuvaus} &hellip;</p>
         </div>
 
         <div className="more">

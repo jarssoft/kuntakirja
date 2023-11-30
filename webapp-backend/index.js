@@ -14,7 +14,9 @@ app.get("/api/notes", (request, response) => {
   console.log(request);
   const pattern = request.query["pattern"].toLowerCase();
   const selected = asukkaat
-    .filter((talo) => talo["sukunimi"].toLowerCase().includes(pattern))
+    .filter((talo) =>
+      (talo["tontti"] + " " + talo["kyla"]).toLowerCase().includes(pattern)
+    )
     .slice(0, 30);
   response.json(selected);
 });

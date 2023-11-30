@@ -1,6 +1,6 @@
-GET http://localhost:3001/api/notes
+GET http://localhost:3001/api/notes?pattern=ilavainen
 Content-Type: application/json
 
 {
-    "pattern": "aaltonen"
+    "pattern": "ilavainen"
 }
