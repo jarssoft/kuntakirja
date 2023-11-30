@@ -25,7 +25,10 @@ function Tietosivu({ talo }) {
       </div>
 
       <div className="card">
-        <img src={getImageName(talo.asukkaat[0].perhe)}></img>
+        <img
+          className={css.isokuva}
+          src={getImageName(talo.asukkaat[0].perhe)}
+        ></img>
       </div>
 
       <div className="card">
