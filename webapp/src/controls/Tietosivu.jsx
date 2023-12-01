@@ -1,4 +1,5 @@
 import css from "./Tiedot.module.css";
+import { Link } from "react-router-dom";
 
 function Tietosivu({ talo }) {
   const getImageName = (perheId) =>
@@ -11,7 +12,7 @@ function Tietosivu({ talo }) {
       <div className="card">
         <h1 className={css.nimi}>{talo.tontti ? `${talo.tontti}` : ""}</h1>
         <div>
-          Eurajoki &gt; {talo.kyla}
+          Eurajoki &gt; <Link to={`/haku/${talo.kyla}`}>{talo.kyla}</Link>
           {talo["pinta-ala"] && talo["pinta-ala"] > 1
             ? ` (${talo["pinta-ala"]} ha)`
             : ""}
@@ -35,7 +36,9 @@ function Tietosivu({ talo }) {
           <p className={css.tooltipp}>
             <span className={css.attributeName}>Materiaali </span>
             <span className={css.attributeValue}>
-              {talo.rakennusmateriaali}
+              {talo.rakennusmateriaali.map((materiaali) => (
+                <span>{materiaali} </span>
+              ))}
             </span>
           </p>
         ) : (
