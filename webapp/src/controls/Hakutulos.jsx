@@ -2,7 +2,9 @@ import { Link } from "react-router-dom";
 
 function Hakutulos({ talo }) {
   const getImageName = (perheId) =>
-    `../../photos/${Math.floor(perheId / 4) + 69}.png-${perheId % 4}.jpg`;
+    `http://ohjelmakartta.fi/kuntakirja/photos/${
+      Math.floor(perheId / 4) + 69
+    }.png-${perheId % 4}.jpg`;
   return (
     <div className="search-result new-job">
       <div className="thumbnail">

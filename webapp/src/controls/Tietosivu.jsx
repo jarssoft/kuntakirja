@@ -2,7 +2,9 @@ import css from "./Tiedot.module.css";
 
 function Tietosivu({ talo }) {
   const getImageName = (perheId) =>
-    `../../photos/${Math.floor(perheId / 4) + 69}.png-${perheId % 4}.jpg`;
+    `http://ohjelmakartta.fi/kuntakirja/photos/${
+      Math.floor(perheId / 4) + 69
+    }.png-${perheId % 4}.jpg`;
 
   return (
     <span>
