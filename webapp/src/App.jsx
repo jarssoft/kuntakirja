@@ -51,9 +51,7 @@ function App() {
                 <h1>Eurajoki</h1>
                 <div className="card">
                   <Hakukentta etsi={hae} />
-                  <p>
-                    Edit <code>src/App.jsx</code> and save to test HMR
-                  </p>
+                  <p>Etsi taloa, tonttia tai kylää.</p>
                 </div>
                 <p className="read-the-docs">
                   Click on the Vite and React logos to learn more
@@ -69,6 +67,15 @@ function App() {
                 {asukkaat.map((talo) => (
                   <Hakutulos talo={talo} />
                 ))}
+                {asukkaat.length > 29 ? (
+                  <div className="card">
+                    Ladattiin 30 ensimmäistä. Tarkenna hakua.{" "}
+                  </div>
+                ) : (
+                  <div className="card">
+                    Kaikki tulokset hakusanalla '{hakusana}'.
+                  </div>
+                )}
               </>
             }
           />
