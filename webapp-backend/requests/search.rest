@@ -1,6 +1,2 @@
-GET https://kuntakirja.onrender.com/api/notes
+GET https://kuntakirja.onrender.com/api/notes?pattern=ilava
 Content-Type: application/json
-
-{
-    "pattern": "aho"
-}

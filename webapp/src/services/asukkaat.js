@@ -1,5 +1,6 @@
 import axios from "axios";
-const baseUrl = "http://localhost:3001/api/notes";
+//const baseUrl = "http://localhost:3001/api/notes";
+const baseUrl = "https://kuntakirja.onrender.com/api/notes";
 
 const getAll = (pattern) => {
   return axios.get(baseUrl, { params: { pattern: pattern } });
