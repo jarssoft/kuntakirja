@@ -13,7 +13,7 @@ app.get("/", (req, res) => {
   res.send("<h1>Hello World!</h1>");
 });
 
-app.get("/api/notes", (request, response) => {
+app.get("/api/talot", (request, response) => {
   //console.log(request);
   const pattern = request.query["pattern"].toLowerCase();
   const offset = request.query["offset"]
@@ -36,6 +36,12 @@ app.get("/api/notes", (request, response) => {
     })
     .slice(offset, offset + 30);
   response.json(selected);
+});
+
+app.get("/api/talot/:id", (request, response) => {
+  const id = Number(request.params.id);
+  const talo = asukkaat.find((talo) => talo.id === id);
+  response.json(talo);
 });
 
 function onlyUnique(value, index, array) {

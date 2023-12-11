@@ -1,0 +1,2 @@
+GET http://localhost:3001/api/talot/1488
+Content-Type: application/json
