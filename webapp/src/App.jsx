@@ -11,13 +11,16 @@ import { useMatch, Routes, Route, useNavigate, Link } from "react-router-dom";
 
 function App() {
   const [asukkaat, setAsukkaat] = useState([]);
+  const [asukas, setAsukas] = useState(null);
   const navigate = useNavigate();
+
   const match = useMatch("/talo/:id");
-  const talo = match
-    ? asukkaat.filter((talo) => talo.id == match.params.id)[0]
-    : null;
+  const taloid = match ? match.params.id : null;
   const match2 = useMatch("/haku/:id");
   const hakusana = match2 ? match2.params.id : null;
+
+  console.log(taloid);
+  console.log(asukas);
 
   //console.log(match);
 
@@ -36,6 +39,16 @@ function App() {
       });
     }
   }, [hakusana]);
+
+  useEffect(() => {
+    console.log("useEffect" + taloid);
+    if (taloid) {
+      noteService.get(taloid).then((response) => {
+        console.log(response.data);
+        setAsukas(response.data);
+      });
+    }
+  }, [taloid]);
 
   return (
     <>
@@ -84,7 +97,7 @@ function App() {
             element={
               <>
                 <Ylapalkki hakusana={hakusana} etsi={hae} />
-                <Tietosivu talo={talo} />
+                {asukas ? <Tietosivu talo={asukas} /> : <>dad</>}
               </>
             }
           />

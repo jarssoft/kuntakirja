@@ -7,6 +7,7 @@ const getAll = (pattern) => {
 };
 
 const get = (id) => {
+  console.log(baseUrl + "/" + id);
   return axios.get(baseUrl + "/" + id);
 };
 
