@@ -20,7 +20,6 @@ app.get("/api/talot", (request, response) => {
     ? parseInt(request.query["offset"])
     : 0;
   const sort = request.query["sort"] ? request.query["sort"] : "tontti";
-  const reverse = request.query["reverse"] ? 1 : -1;
   const selected = asukkaat
     .filter((talo) =>
       (talo["tontti"] + " " + talo["kyla"] + " " + talo["rakennusvuosi"])
@@ -28,11 +27,14 @@ app.get("/api/talot", (request, response) => {
         .includes(pattern)
     )
     .sort((talo1, talo2) => {
-      console.log(talo1["pinta-ala"]);
       if (sort === "tontti") {
-        return (talo1["tontti"] < talo2["tontti"] ? 1 : -1) * reverse;
+        return talo1["tontti"] > talo2["tontti"] ? 1 : -1;
       }
-      return (talo1[sort] - talo2[sort]) * reverse;
+
+      const sort1 = talo1[sort] ? parseFloat(talo1[sort]) : 0;
+      const sort2 = talo2[sort] ? parseFloat(talo2[sort]) : 0;
+
+      return sort1 < sort2 ? 1 : -1;
     })
     .slice(offset, offset + 30);
   response.json(selected);
@@ -56,8 +58,7 @@ app.get("/api/kylat", (request, response) => {
     .filter((kyla) => kyla != null)
     .sort((kyla1, kyla2) => {
       return kyla1 > kyla2 ? 1 : -1;
-    })
-    .slice(0, 30);
+    });
   response.json(selected);
 });
 

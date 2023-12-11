@@ -17,6 +17,15 @@ Content-Type: application/json
 GET http://localhost:3001/api/talot?pattern=hankkila&offset=5&sort=pinta-ala
 Content-Type: application/json
 
+#########Kuivalahti
+GET http://localhost:3001/api/talot?pattern=kuivalahti&offset=0&sort=pinta-ala
+Content-Type: application/json
+
+#########Kuivalahti2
+GET http://localhost:3001/api/talot?pattern=kuivalahti&offset=30&sort=pinta-ala
+Content-Type: application/json
+
+
 #########
 GET http://localhost:3001/api/talot?pattern=hankkila&offset=0&sort=pinta-ala&reverse=1
 Content-Type: application/json
