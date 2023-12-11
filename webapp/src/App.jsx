@@ -5,7 +5,7 @@ import Hakukentta from "./controls/Hakukentta.jsx";
 import Hakutulos from "./controls/Hakutulos.jsx";
 import Tietosivu from "./controls/Tietosivu.jsx";
 import Ylapalkki from "./controls/Ylapalkki.jsx";
-//import asukkaat from "./data/eurajoki.json";
+import kylat from "./data/kylat.json";
 import noteService from "./services/asukkaat";
 import { useMatch, Routes, Route, useNavigate, Link } from "react-router-dom";
 
@@ -36,6 +36,7 @@ function App() {
       noteService.getAll(hakusana).then((response) => {
         console.log(response.data);
         setAsukkaat(response.data);
+        setAsukas(null);
       });
     }
   }, [hakusana]);
@@ -64,10 +65,14 @@ function App() {
                 <h1>Eurajoki</h1>
                 <div className="card">
                   <Hakukentta etsi={hae} />
-                  <p>Etsi taloa, tonttia tai kylää.</p>
+                  <p>Etsi tilaa, tonttia, kylää tai rakennusvuotta.</p>
                 </div>
                 <p className="read-the-docs">
-                  Click on the Vite and React logos to learn more
+                  {kylat.map((kyla) => (
+                    <>
+                      <Link to={`/haku/${kyla}`}>{kyla}</Link> -{" "}
+                    </>
+                  ))}
                 </p>
               </div>
             }
