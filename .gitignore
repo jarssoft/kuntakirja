@@ -6,7 +6,6 @@ kaios-app/node_modules
 kirja.json
 kaios-app/src/data/*
 kaios-app/build/*
-webapp/src/data/*
 webapp/photos/*
 webapp-backend/node_modules
 eurajoki.json
