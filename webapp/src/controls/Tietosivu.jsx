@@ -64,6 +64,16 @@ function Tietosivu({ talo }) {
         ) : (
           ""
         )}
+        {talo.id ? (
+          <p className={css.tooltipp}>
+            <span className={css.attributeName}>Kirjan sivu </span>
+            <span className={css.attributeValue}>
+              {Math.floor(talo.id / 4) + 69}
+            </span>
+          </p>
+        ) : (
+          ""
+        )}
       </div>
 
       {/*
