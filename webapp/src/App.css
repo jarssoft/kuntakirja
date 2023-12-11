@@ -125,6 +125,7 @@ div.more {
 
   a {
     text-decoration: none;
+    color: rgb(0, 0, 0);
   }
 
   .thumbnail {
@@ -146,7 +147,7 @@ div.more {
   }
 
   div > div p {
-    color: rgb(192, 199, 212);
+    color: rgb(92, 99, 112);
     margin-top: 10px;
   }
 }

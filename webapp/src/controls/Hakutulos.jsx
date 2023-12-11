@@ -20,7 +20,7 @@ function Hakutulos({ talo }) {
           <span className="company">
             <Link to={`/haku/${talo.kyla}`}>{talo.kyla}</Link>
           </span>
-          -
+
           <a href="/reviews/1234">
             <span className="stars">
               <span className="stars-inner"></span>
@@ -29,7 +29,14 @@ function Hakutulos({ talo }) {
           </a>
         </p>
         <div>
-          <p>"" &hellip;</p>
+          <p>
+            {talo["pinta-ala"] ? <>{talo["pinta-ala"]} hehtaaria. </> : <></>}
+            {talo["rakennusvuosi"] ? (
+              <> Rakennusvuosi: {talo["rakennusvuosi"]}. </>
+            ) : (
+              <></>
+            )}
+          </p>
         </div>
 
         <div className="more">
