@@ -1,6 +1,30 @@
-GET http://localhost:3001/api/notes?pattern=ilavainen
+#333
+GET http://localhost:3001/api/notes?pattern=hankkila
+
+#########
+GET http://localhost:3001/api/notes?pattern=hankkila&offset=1
 Content-Type: application/json
 
-{
-    "pattern": "ilavainen"
-}
+#########
+GET http://localhost:3001/api/notes?pattern=hankkila&offset=1000
+Content-Type: application/json
+
+#########
+GET http://localhost:3001/api/notes?pattern=hankkila&offset=0&sort=pinta-ala
+Content-Type: application/json
+
+#########
+GET http://localhost:3001/api/notes?pattern=hankkila&offset=5&sort=pinta-ala
+Content-Type: application/json
+
+#########
+GET http://localhost:3001/api/notes?pattern=hankkila&offset=0&sort=pinta-ala&reverse=1
+Content-Type: application/json
+
+#########
+GET http://localhost:3001/api/notes?pattern=hankkila&offset=0&sort=rakennusvuosi
+Content-Type: application/json
+
+#########
+GET http://localhost:3001/api/notes?pattern=hankkila&offset=0&sort=rakennusvuosi&reverse=1
+Content-Type: application/json
