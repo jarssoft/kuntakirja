@@ -65,3 +65,13 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.selected {
+  color: #213547;
+}
+.noselected,
+.selected {
+  display: inline-block;
+  margin-left: 0.7em;
+  font-weight: 700;
+}

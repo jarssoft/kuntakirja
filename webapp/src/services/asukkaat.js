@@ -2,8 +2,10 @@ import axios from "axios";
 const baseUrl = "http://localhost:3001/api/talot";
 //const baseUrl = "https://kuntakirja.onrender.com/api/notes";
 
-const getAll = (pattern, offset) => {
-  return axios.get(baseUrl, { params: { pattern: pattern, offset: offset } });
+const getAll = (pattern, offset, sort) => {
+  return axios.get(baseUrl, {
+    params: { pattern: pattern, offset: offset, sort: sort },
+  });
 };
 
 const get = (id) => {

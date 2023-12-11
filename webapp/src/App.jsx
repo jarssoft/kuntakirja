@@ -13,6 +13,7 @@ function App() {
   const [asukkaat, setAsukkaat] = useState([]);
   const [asukas, setAsukas] = useState(null);
   const [offset, setOffset] = useState(0);
+  const [sort, setSort] = useState("tontti");
   const navigate = useNavigate();
 
   const match = useMatch("/talo/:id");
@@ -22,7 +23,7 @@ function App() {
 
   useEffect(() => {
     setOffset(0);
-  }, [hakusana]);
+  }, [hakusana, sort]);
 
   console.log(taloid);
   console.log(asukas);
@@ -38,7 +39,7 @@ function App() {
 
   useEffect(() => {
     if (hakusana) {
-      noteService.getAll(hakusana, offset).then((response) => {
+      noteService.getAll(hakusana, offset, sort).then((response) => {
         console.log(response.data);
         if (offset == 0) {
           setAsukkaat(response.data);
@@ -48,7 +49,7 @@ function App() {
         setAsukas(null);
       });
     }
-  }, [hakusana, offset]);
+  }, [hakusana, offset, sort]);
 
   useEffect(() => {
     console.log("useEffect" + taloid);
@@ -91,6 +92,32 @@ function App() {
             element={
               <>
                 <Ylapalkki hakusana={hakusana} etsi={hae} />
+                <div>
+                  Järjestys:
+                  <Link
+                    className={sort == "tontti" ? "selected" : "noselected"}
+                    onClick={() => setSort("tontti")}
+                  >
+                    {" "}
+                    Nimi
+                  </Link>
+                  <Link
+                    className={sort == "pinta-ala" ? "selected" : "noselected"}
+                    onClick={() => setSort("pinta-ala")}
+                  >
+                    {" "}
+                    Pinta-ala
+                  </Link>
+                  <Link
+                    className={
+                      sort == "rakennusvuosi" ? "selected" : "noselected"
+                    }
+                    onClick={() => setSort("rakennusvuosi")}
+                  >
+                    {" "}
+                    Rakennettu
+                  </Link>
+                </div>
                 {asukkaat.map((talo) => (
                   <Hakutulos talo={talo} />
                 ))}

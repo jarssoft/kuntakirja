@@ -32,7 +32,7 @@ function Hakutulos({ talo }) {
           <p>
             {talo["pinta-ala"] ? <>{talo["pinta-ala"]} hehtaaria. </> : <></>}
             {talo["rakennusvuosi"] ? (
-              <> Rakennusvuosi: {talo["rakennusvuosi"]}. </>
+              <> Rakennettu {talo["rakennusvuosi"]}. </>
             ) : (
               <></>
             )}

@@ -1,7 +1,7 @@
 .todos {
   display: flex;
   flex-direction: column;
-  padding: 0 10px;
+  padding: 20 10px;
 } /*
 
 .todos span {
