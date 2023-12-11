@@ -12,12 +12,17 @@ import { useMatch, Routes, Route, useNavigate, Link } from "react-router-dom";
 function App() {
   const [asukkaat, setAsukkaat] = useState([]);
   const [asukas, setAsukas] = useState(null);
+  const [offset, setOffset] = useState(0);
   const navigate = useNavigate();
 
   const match = useMatch("/talo/:id");
   const taloid = match ? match.params.id : null;
   const match2 = useMatch("/haku/:id");
   const hakusana = match2 ? match2.params.id : null;
+
+  useEffect(() => {
+    setOffset(0);
+  }, [hakusana]);
 
   console.log(taloid);
   console.log(asukas);
@@ -33,13 +38,17 @@ function App() {
 
   useEffect(() => {
     if (hakusana) {
-      noteService.getAll(hakusana).then((response) => {
+      noteService.getAll(hakusana, offset).then((response) => {
         console.log(response.data);
-        setAsukkaat(response.data);
+        if (offset == 0) {
+          setAsukkaat(response.data);
+        } else {
+          setAsukkaat(asukkaat.concat(response.data));
+        }
         setAsukas(null);
       });
     }
-  }, [hakusana]);
+  }, [hakusana, offset]);
 
   useEffect(() => {
     console.log("useEffect" + taloid);
@@ -85,9 +94,13 @@ function App() {
                 {asukkaat.map((talo) => (
                   <Hakutulos talo={talo} />
                 ))}
-                {asukkaat.length > 29 ? (
+                {asukkaat.length % 30 == 0 ? (
                   <div className="card">
-                    Ladattiin 30 ensimmäistä. Tarkenna hakua.{" "}
+                    Ladattu {offset + 30} ensimmäistä.
+                    <Link onClick={() => setOffset(offset + 30)}>
+                      {" "}
+                      Lataa lisää
+                    </Link>{" "}
                   </div>
                 ) : (
                   <div className="card">
