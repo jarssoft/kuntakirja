@@ -54,6 +54,7 @@ function Tietosivu({ talo }) {
         ) : (
           ""
         )}
+
         {talo["pinta-ala"] ? (
           <p className={css.tooltipp}>
             <span className={css.attributeName}>Pinta-ala </span>
@@ -64,6 +65,31 @@ function Tietosivu({ talo }) {
         ) : (
           ""
         )}
+
+        {talo["tuotanto"] ? (
+          <p className={css.tooltipp}>
+            <span className={css.attributeName}>Tuotanto </span>
+            <span className={css.attributeValue}>
+              {talo["tuotanto"].map((tuote) => (
+                <span>{tuote}</span>
+              ))}
+            </span>
+          </p>
+        ) : (
+          ""
+        )}
+
+        {talo["omistajanvaihdos"] ? (
+          <p className={css.tooltipp}>
+            <span className={css.attributeName}>Omistajavaihdos </span>
+            <span className={css.attributeValue}>
+              {talo["omistajanvaihdos"]}
+            </span>
+          </p>
+        ) : (
+          ""
+        )}
+
         {talo.id ? (
           <p className={css.tooltipp}>
             <span className={css.attributeName}>Kirjan sivu </span>
