@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 function Hakutulos({ talo }) {
   const getImageName = (perheId) =>
-    `http://ohjelmakartta.fi/kuntakirja/photos/${
+    `http://ohjelmakartta.fi/kuntakirja/thumbnails/${
       Math.floor(perheId / 4) + 69
     }.png-${perheId % 4}.jpg`;
   return (

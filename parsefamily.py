@@ -334,7 +334,10 @@ def parsiResults(results, minconf):
 def cropFile(imagefile, piste, i):
 	image = cv2.imread("images/"+imagefile)
 	cropped_image = image[(piste[1]+370):(piste[1]+900), (piste[0]):(piste[0]+950)]
-	cv2.imwrite("photos/"+imagefile+"-"+str(i)+".jpg", cropped_image)
+	#cv2.imwrite("photos/"+imagefile+"-"+str(i)+".jpg", cropped_image)
+
+	thumbnail = cv2.resize(cropped_image, (160, 89), interpolation = cv2.INTER_AREA)
+	cv2.imwrite("thumbnails/"+imagefile+"-"+str(i)+".jpg", thumbnail)
 
 def parseFile(imagefile, useCache, minconf):
 
@@ -356,8 +359,8 @@ def parseFile(imagefile, useCache, minconf):
 		results = pickle.load(fp)
 
 	pal = parsiResults(results, minconf)
-	##for i in range(0,4):
-	#	cropFile(imagefile, pal[1][i], i)
+	for i in range(0,4):
+		cropFile(imagefile, pal[1][i], i)
 
 	return pal[0]
 

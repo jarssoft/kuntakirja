@@ -22,7 +22,7 @@ for p in range(69,464):
             
 print("Total fails ",fails)
 
-#exit(0)
+exit(0)
 
 perheet=[]
 pid=0
