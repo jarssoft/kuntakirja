@@ -1,6 +1,8 @@
 import argparse
 from parsefamily import *
 from rutiinit import *
+from parsekuvausomistus import *
+from parsekuvausviljely import *
 import itertools
 import copy
 
@@ -25,7 +27,7 @@ print("Total fails ",fails)
 perheet=[]
 pid=0
 for p in range(69,464):
-    print("parse ",p)
+    #print("parse ",p)
     uudet=parseFile(str(p)+".png", 0, 0)
     #for kuva in range(0,4):
     #    uudet[kuva]["kirjassa"]={"sivu": p, "kuva": kuva}
@@ -36,8 +38,32 @@ for p in range(69,464):
             del perhe ['liitto']
         if "lapset" in perhe:
             del perhe ['lapset']
-        if "kuvaus" in perhe:
+        if "kuvaus" in perhe and "tontti" in perhe:
+            tuotanto = parsiTuotanto(perhe['kuvaus'])
+            print(tuotanto)
+            if(tuotanto == [] and "sokerijuu" in perhe ['kuvaus']):
+                print(perhe ['kuvaus'])
+            omistajanvaihdos = parsi(perhe['kuvaus'], perhe['tontti'])
+            print(omistajanvaihdos)
+
+            if(tuotanto != []):
+                perhe["tuotanto"]=tuotanto
+
+            if(omistajanvaihdos is not None):
+                perhe["omistajanvaihdos"]=omistajanvaihdos
+
+            #if(omistajanvaihdos is None and "osti" in perhe ['kuvaus']):
+            #    print(perhe ['kuvaus'])
+            #if(" perikunnalta" in perhe ['kuvaus']):
+            #    print(perhe ['kuvaus'])            
+            #if("Tilalla harjoitetaan" in perhe ['kuvaus']):
+            #    print(perhe ['kuvaus'])
+            #if("suvulla vuodesta" in perhe ['kuvaus']):
+            #    print(perhe ['kuvaus'])
+            #if("kasvate" in perhe ['kuvaus']):
+            #print(perhe ['kuvaus'])
             del perhe ['kuvaus']
+            
         perhe["id"]=pid
         if "tontti" in perhe:
             perheet.append(perhe)        
@@ -122,5 +148,5 @@ print(perheet[i2])
 
 y = json.dumps(perheet)
 #print(y)
-with open("kaios-app/src/data/eurajoki.json", "w") as text_file:
+with open("webapp-backend/eurajoki.json", "w") as text_file:
     text_file.write(y)
